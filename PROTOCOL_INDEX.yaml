@@ -40,3 +40,14 @@ protocols:
     output_schema_path: protocols/email/validate/schema.output.json
     status: draft
     summary: Valida cumplimiento de tono, formato y bloqueos.
+
+
+- protocol_id: email_contact_context_v1
+  domain: email
+  stage: contextualize
+  version: v1
+  tags: [email, contexto, remitente, historial, tono, google-contacts, pending, gridcode]
+  input_schema_path: protocols/email/contextualize/schema.input.json
+  output_schema_path: protocols/email/contextualize/schema.output.json
+  status: draft
+  summary: Contextualiza contacto por remitente e historial aunque cambie el asunto.
