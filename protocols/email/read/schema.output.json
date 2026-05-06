@@ -1,0 +1,19 @@
+{
+  "type": "object",
+  "required": [
+    "protocol_id",
+    "emails",
+    "count"
+  ],
+  "properties": {
+    "protocol_id": {
+      "type": "string"
+    },
+    "emails": {
+      "type": "array"
+    },
+    "count": {
+      "type": "integer"
+    }
+  }
+}

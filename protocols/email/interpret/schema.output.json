@@ -1,0 +1,23 @@
+{
+  "type": "object",
+  "required": [
+    "protocol_id",
+    "category",
+    "priority",
+    "requires_reply"
+  ],
+  "properties": {
+    "protocol_id": {
+      "type": "string"
+    },
+    "category": {
+      "type": "string"
+    },
+    "priority": {
+      "type": "string"
+    },
+    "requires_reply": {
+      "type": "boolean"
+    }
+  }
+}

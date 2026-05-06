@@ -1,0 +1,15 @@
+{
+  "type": "object",
+  "required": [
+    "protocol_id",
+    "body"
+  ],
+  "properties": {
+    "protocol_id": {
+      "type": "string"
+    },
+    "body": {
+      "type": "string"
+    }
+  }
+}

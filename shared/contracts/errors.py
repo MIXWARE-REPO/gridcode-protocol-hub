@@ -1,0 +1,2 @@
+class ProtocolValidationError(Exception):
+    pass

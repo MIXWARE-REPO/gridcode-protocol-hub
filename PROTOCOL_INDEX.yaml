@@ -1,0 +1,42 @@
+version: 1
+project: gridcode-protocol-hub
+protocols:
+  - protocol_id: email_read_v1
+    domain: email
+    stage: read
+    version: v1
+    tags: [email, read, threads, context]
+    input_schema_path: protocols/email/read/schema.input.json
+    output_schema_path: protocols/email/read/schema.output.json
+    status: draft
+    summary: Lee correos y normaliza campos para análisis.
+
+  - protocol_id: email_interpret_v1
+    domain: email
+    stage: interpret
+    version: v1
+    tags: [email, interpret, classify, ticket]
+    input_schema_path: protocols/email/interpret/schema.input.json
+    output_schema_path: protocols/email/interpret/schema.output.json
+    status: draft
+    summary: Clasifica intención y prioridad operativa.
+
+  - protocol_id: email_write_v1
+    domain: email
+    stage: write
+    version: v1
+    tags: [email, write, style, reply]
+    input_schema_path: protocols/email/write/schema.input.json
+    output_schema_path: protocols/email/write/schema.output.json
+    status: draft
+    summary: Redacta respuesta en formato humano estándar.
+
+  - protocol_id: email_validate_v1
+    domain: email
+    stage: validate
+    version: v1
+    tags: [email, validate, guardrails]
+    input_schema_path: protocols/email/validate/schema.input.json
+    output_schema_path: protocols/email/validate/schema.output.json
+    status: draft
+    summary: Valida cumplimiento de tono, formato y bloqueos.

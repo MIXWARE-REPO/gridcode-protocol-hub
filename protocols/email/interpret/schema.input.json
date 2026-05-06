@@ -1,0 +1,15 @@
+{
+  "type": "object",
+  "required": [
+    "subject",
+    "body"
+  ],
+  "properties": {
+    "subject": {
+      "type": "string"
+    },
+    "body": {
+      "type": "string"
+    }
+  }
+}
