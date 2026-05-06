@@ -1,53 +1,65 @@
-version: 1
-project: gridcode-protocol-hub
-protocols:
-  - protocol_id: email_read_v1
-    domain: email
-    stage: read
-    version: v1
-    tags: [email, read, threads, context]
-    input_schema_path: protocols/email/read/schema.input.json
-    output_schema_path: protocols/email/read/schema.output.json
-    status: draft
-    summary: Lee correos y normaliza campos para análisis.
-
-  - protocol_id: email_interpret_v1
-    domain: email
-    stage: interpret
-    version: v1
-    tags: [email, interpret, classify, ticket]
-    input_schema_path: protocols/email/interpret/schema.input.json
-    output_schema_path: protocols/email/interpret/schema.output.json
-    status: draft
-    summary: Clasifica intención y prioridad operativa.
-
-  - protocol_id: email_write_v1
-    domain: email
-    stage: write
-    version: v1
-    tags: [email, write, style, reply]
-    input_schema_path: protocols/email/write/schema.input.json
-    output_schema_path: protocols/email/write/schema.output.json
-    status: draft
-    summary: Redacta respuesta en formato humano estándar.
-
-  - protocol_id: email_validate_v1
-    domain: email
-    stage: validate
-    version: v1
-    tags: [email, validate, guardrails]
-    input_schema_path: protocols/email/validate/schema.input.json
-    output_schema_path: protocols/email/validate/schema.output.json
-    status: draft
-    summary: Valida cumplimiento de tono, formato y bloqueos.
-
-
-- protocol_id: email_contact_context_v1
-  domain: email
-  stage: contextualize
-  version: v1
-  tags: [email, contexto, remitente, historial, tono, google-contacts, pending, gridcode]
-  input_schema_path: protocols/email/contextualize/schema.input.json
-  output_schema_path: protocols/email/contextualize/schema.output.json
-  status: draft
-  summary: Contextualiza contacto por remitente e historial aunque cambie el asunto.
+     1|version: 1
+     2|project: gridcode-protocol-hub
+     3|protocols:
+     4|  - protocol_id: email_read_v1
+     5|    domain: email
+     6|    stage: read
+     7|    version: v1
+     8|    tags: [email, read, threads, context]
+     9|    input_schema_path: protocols/email/read/schema.input.json
+    10|    output_schema_path: protocols/email/read/schema.output.json
+    11|    status: draft
+    12|    summary: Lee correos y normaliza campos para análisis.
+    13|
+    14|  - protocol_id: email_interpret_v1
+    15|    domain: email
+    16|    stage: interpret
+    17|    version: v1
+    18|    tags: [email, interpret, classify, ticket]
+    19|    input_schema_path: protocols/email/interpret/schema.input.json
+    20|    output_schema_path: protocols/email/interpret/schema.output.json
+    21|    status: draft
+    22|    summary: Clasifica intención y prioridad operativa.
+    23|
+    24|  - protocol_id: email_write_v1
+    25|    domain: email
+    26|    stage: write
+    27|    version: v1
+    28|    tags: [email, write, style, reply]
+    29|    input_schema_path: protocols/email/write/schema.input.json
+    30|    output_schema_path: protocols/email/write/schema.output.json
+    31|    status: draft
+    32|    summary: Redacta respuesta en formato humano estándar.
+    33|
+    34|  - protocol_id: email_validate_v1
+    35|    domain: email
+    36|    stage: validate
+    37|    version: v1
+    38|    tags: [email, validate, guardrails]
+    39|    input_schema_path: protocols/email/validate/schema.input.json
+    40|    output_schema_path: protocols/email/validate/schema.output.json
+    41|    status: draft
+    42|    summary: Valida cumplimiento de tono, formato y bloqueos.
+    43|
+    44|
+    45|- protocol_id: email_contact_context_v1
+    46|  domain: email
+    47|  stage: contextualize
+    48|  version: v1
+    49|  tags: [email, contexto, remitente, historial, tono, google-contacts, pending, gridcode]
+    50|  input_schema_path: protocols/email/contextualize/schema.input.json
+    51|  output_schema_path: protocols/email/contextualize/schema.output.json
+    52|  status: draft
+    53|  summary: Contextualiza contacto por remitente e historial aunque cambie el asunto.
+    54|
+    55|
+    56|- protocol_id: email_contact_update_v1
+    57|  domain: email
+    58|  stage: contact_update
+    59|  version: v1
+    60|  tags: [email, contacts, google-contacts, context, update, pending, relationship]
+    61|  input_schema_path: protocols/email/contact_update/schema.input.json
+    62|  output_schema_path: protocols/email/contact_update/schema.output.json
+    63|  status: draft
+    64|  summary: Define acción y payload para actualizar contexto de contacto en Google Contacts.
+    65|

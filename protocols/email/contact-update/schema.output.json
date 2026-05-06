@@ -1,0 +1,30 @@
+{
+  "type": "object",
+  "required": [
+    "protocol_id",
+    "action",
+    "reason_codes",
+    "update_payload",
+    "expected_store"
+  ],
+  "properties": {
+    "protocol_id": {
+      "type": "string"
+    },
+    "action": {
+      "type": "string"
+    },
+    "reason_codes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "update_payload": {
+      "type": "object"
+    },
+    "expected_store": {
+      "type": "string"
+    }
+  }
+}

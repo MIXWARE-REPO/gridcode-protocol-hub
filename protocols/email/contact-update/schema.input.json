@@ -1,0 +1,26 @@
+{
+  "type": "object",
+  "required": [
+    "context",
+    "email"
+  ],
+  "properties": {
+    "contact": {
+      "type": "object"
+    },
+    "context": {
+      "type": "object"
+    },
+    "email": {
+      "type": "object"
+    },
+    "policy": {
+      "type": "object",
+      "properties": {
+        "max_topics": {
+          "type": "integer"
+        }
+      }
+    }
+  }
+}
