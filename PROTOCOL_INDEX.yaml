@@ -66,6 +66,56 @@ channels:
         status: draft
         summary: Valida cumplimiento de tono, formato y bloqueos.
 
+      - protocol_id: email_response_orchestrator_v1
+        channel: email
+        stage: orchestrate_response
+        version: v1
+        tags: [email, response, commitments, proactive, tasks]
+        input_schema_path: shared/orchestration/email_response_orchestrator_v1.py#payload
+        output_schema_path: shared/orchestration/email_response_orchestrator_v1.py#return
+        status: draft
+        summary: Orquesta respuesta con validación de estilo, compromisos y tareas proactivas.
+
+      - protocol_id: email_delivery_policy_v1
+        channel: email
+        stage: delivery
+        version: v1
+        tags: [email, delivery, timing, errata, reply-all, cc]
+        input_schema_path: shared/orchestration/email_delivery_policy_v1.py#inputs
+        output_schema_path: shared/orchestration/email_delivery_policy_v1.py#decision
+        status: draft
+        summary: Define envío inmediato o posdatado, reglas de destinatarios y protocolo de erratas.
+
+      - protocol_id: email_attachments_router_v1
+        channel: email
+        stage: attachments
+        version: v1
+        tags: [email, attachments, drive, routing]
+        input_schema_path: shared/orchestration/email_attachments_router_v1.py#email_record
+        output_schema_path: shared/orchestration/email_attachments_router_v1.py#resolution_plan
+        status: draft
+        summary: Resuelve fuentes de adjuntos (Gmail/Drive) y plan de custodia.
+
+      - protocol_id: email_learning_rail_v1
+        channel: email
+        stage: learning
+        version: v1
+        tags: [email, learning, outcomes, pending, sla]
+        input_schema_path: shared/learning/email_learning_rail_v1.py#payload
+        output_schema_path: shared/learning/email_learning_rail_v1.py#record
+        status: draft
+        summary: Registra aprendizaje operativo y outcomes normalizados del flujo email.
+
+      - protocol_id: email_webhook_trigger_v1
+        channel: email
+        stage: trigger
+        version: v1
+        tags: [email, webhook, trigger, dedupe, hmac]
+        input_schema_path: shared/orchestration/email_webhook_trigger_v1.py#raw_event
+        output_schema_path: shared/orchestration/email_webhook_trigger_v1.py#inbound_update_event
+        status: draft
+        summary: Valida y deduplica eventos webhook para disparar el rail de gestión de email.
+
   linkedin:
     description: "Reservado para procesos de comentarios, mensajes y publicaciones en LinkedIn."
     protocols: []
