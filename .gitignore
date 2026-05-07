@@ -1,6 +1,7 @@
 __pycache__/
 *.pyc
 .venv/
+out/
 
 data/*.jsonl
 data/weekly_pending/*.json
