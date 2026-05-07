@@ -1,1 +1,494 @@
-<!-- Subir aquí la plantilla Form-Preliminar -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Informe de Análisis Preliminar | Grid Code</title>
+<link rel="icon" href="data:,">
+<style>
+    @page {
+        size: A4 portrait;
+        margin: 0;
+    }
+
+    @font-face {
+        font-family: 'MontserratAlt1';
+        src: url('../grid-code.tech/_astro/MontserratAlt1-ExtraBold.BOKMlsox.woff2') format('woff2'),
+             url('../grid-code.tech/_astro/MontserratAlt1-ExtraBold.DnZa15wM.woff') format('woff');
+        font-weight: 800;
+        font-style: normal;
+        font-display: swap;
+    }
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    :root {
+        --gc-deep: #00272c;
+        --gc-deep-2: #073940;
+        --gc-cyan: #169dae;
+        --gc-cyan-bright: #2afcd6;
+        --gc-cyan-soft: #1fd9f0;
+        --gc-white: #ffffff;
+        --gc-muted: #91a6b1;
+        --gc-glass: rgba(255, 255, 255, 0.06);
+        --gc-glass-strong: rgba(255, 255, 255, 0.09);
+        --gc-border: rgba(42, 252, 214, 0.18);
+        --gc-border-soft: rgba(255, 255, 255, 0.12);
+    }
+
+    html, body {
+        font-family: "Microsoft JhengHei Light", "Microsoft JhengHei", Arial, sans-serif;
+        font-weight: 300;
+        color: var(--gc-white);
+        background: #001518;
+        -webkit-font-smoothing: antialiased;
+        font-size: 11pt;
+    }
+
+    body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1.5rem;
+        padding: 1.5rem 0;
+    }
+
+    /* ===== A4 PAGE ===== */
+    .page {
+        position: relative;
+        width: 210mm;
+        min-height: 297mm;
+        padding: 12mm 12mm;
+        background: var(--gc-deep);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        gap: 4mm;
+        box-shadow: 0 18px 60px rgba(0, 0, 0, 0.5);
+    }
+    .page::before, .page::after {
+        content: "";
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(80px);
+        z-index: 0;
+        pointer-events: none;
+    }
+    .page::before {
+        width: 220mm; height: 220mm;
+        background: radial-gradient(circle, rgba(22, 157, 174, 0.30), transparent 70%);
+        top: -90mm; left: -60mm;
+    }
+    .page::after {
+        width: 200mm; height: 200mm;
+        background: radial-gradient(circle, rgba(42, 252, 214, 0.14), transparent 70%);
+        bottom: -90mm; right: -60mm;
+    }
+    .page > * { position: relative; z-index: 1; }
+    .page-spacer { flex: 1; }
+
+    /* ===== HEADER (familia Grid Code) ===== */
+    .report-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 6mm 8mm;
+        background: linear-gradient(135deg, rgba(7, 57, 64, 0.85), rgba(0, 39, 44, 0.65));
+        border: 1px solid var(--gc-border);
+        border-radius: 14px;
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    }
+    .report-header h1 {
+        font-size: 14pt;
+        font-weight: 700;
+        letter-spacing: 0.01em;
+        line-height: 1.2;
+    }
+    .report-header p {
+        margin-top: 0.2rem;
+        font-size: 9pt;
+        color: var(--gc-muted);
+        font-weight: 300;
+    }
+    .logo {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+    .logo-text {
+        font-family: 'MontserratAlt1', "Microsoft JhengHei", Arial, sans-serif;
+        font-size: 16pt;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        color: var(--gc-white);
+        line-height: 1;
+    }
+    .logo-text small {
+        display: block;
+        font-family: "Microsoft JhengHei Light", "Microsoft JhengHei", Arial, sans-serif;
+        font-size: 7pt;
+        letter-spacing: 0.18em;
+        color: var(--gc-cyan-bright);
+        font-weight: 400;
+        margin-top: 1.5mm;
+        text-transform: uppercase;
+    }
+
+    /* ===== FOOTER (familia Grid Code) ===== */
+    .footer-contact {
+        text-align: center;
+        font-size: 8.5pt;
+        color: var(--gc-muted);
+        padding: 2.5mm 3mm;
+        background: rgba(0, 0, 0, 0.25);
+        border-top: 1px solid var(--gc-border-soft);
+        border-radius: 8px;
+        margin-top: auto;
+    }
+    .footer-contact a { color: var(--gc-cyan-bright); text-decoration: none; }
+    .footer-contact a:hover { text-decoration: underline; }
+
+    /* ===== META BAR (código / fecha / versión / proyecto) ===== */
+    .meta-bar {
+        background: var(--gc-glass);
+        border: 1px solid var(--gc-border-soft);
+        border-radius: 10px;
+        backdrop-filter: blur(14px);
+        padding: 3.5mm 5mm;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 2.4fr;
+        gap: 5mm;
+        align-items: center;
+        page-break-inside: avoid;
+        break-inside: avoid;
+    }
+    .meta-bar > div { display: flex; flex-direction: column; gap: 0.6mm; }
+    .meta-bar span {
+        font-size: 6.8pt;
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        color: var(--gc-cyan-bright);
+        font-weight: 600;
+    }
+    .meta-bar b {
+        font-size: 10pt;
+        font-weight: 600;
+        color: var(--gc-white);
+        font-variant-numeric: tabular-nums;
+        letter-spacing: 0.02em;
+        line-height: 1.2;
+    }
+    .meta-bar .meta-project {
+        border-left: 1px solid var(--gc-border-soft);
+        padding-left: 5mm;
+    }
+    .meta-bar .meta-project b { font-size: 11pt; font-weight: 700; }
+
+    /* ===== FRAME CENTRAL (análisis) ===== */
+    .analysis-frame {
+        flex: 1;
+        background: var(--gc-glass);
+        border: 1px solid var(--gc-border-soft);
+        border-radius: 12px;
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.22);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+    .frame-head {
+        padding: 3.5mm 6mm;
+        background: linear-gradient(90deg, rgba(22, 157, 174, 0.20), rgba(42, 252, 214, 0.04));
+        border-bottom: 1px solid var(--gc-border-soft);
+        display: flex;
+        align-items: center;
+        gap: 2.5mm;
+    }
+    .frame-head-title {
+        font-family: 'MontserratAlt1', "Microsoft JhengHei", Arial, sans-serif;
+        font-size: 11pt;
+        font-weight: 800;
+        letter-spacing: 0.18em;
+        color: var(--gc-white);
+        text-transform: uppercase;
+    }
+    .frame-head::before {
+        content: '';
+        width: 3px;
+        height: 5mm;
+        background: var(--gc-cyan-bright);
+        border-radius: 2px;
+    }
+    .frame-head-sub {
+        margin-left: auto;
+        font-size: 7.5pt;
+        color: var(--gc-muted);
+        font-weight: 400;
+        letter-spacing: 0.06em;
+        font-style: italic;
+    }
+    .frame-body {
+        flex: 1;
+        padding: 6mm 8mm 7mm;
+        display: flex;
+        flex-direction: column;
+        gap: 4mm;
+        overflow: hidden;
+    }
+
+    /* Subsecciones del análisis */
+    .subsection {
+        page-break-inside: avoid;
+        break-inside: avoid;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5mm;
+    }
+    .subsection h3 {
+        font-size: 8.5pt;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        color: var(--gc-cyan-bright);
+        text-transform: uppercase;
+        display: inline-flex;
+        align-items: center;
+        gap: 2.5mm;
+    }
+    .subsection h3::before {
+        content: '';
+        width: 2.5mm; height: 2.5mm;
+        background: var(--gc-cyan-bright);
+        border-radius: 1px;
+        flex-shrink: 0;
+        box-shadow: 0 0 8px rgba(42, 252, 214, 0.5);
+    }
+    .subsection p {
+        font-size: 10pt;
+        line-height: 1.55;
+        color: rgba(255, 255, 255, 0.92);
+        text-align: justify;
+        hyphens: auto;
+    }
+    .subsection p + p { margin-top: 1.5mm; }
+    .subsection p b, .subsection p strong { color: var(--gc-cyan-bright); font-weight: 600; }
+
+    /* Posición del equipo (resaltada) */
+    .subsection--position {
+        background: linear-gradient(135deg, rgba(42, 252, 214, 0.10), rgba(22, 157, 174, 0.04));
+        border: 1px solid var(--gc-border);
+        border-left: 3px solid var(--gc-cyan-bright);
+        border-radius: 6px;
+        padding: 3mm 4mm 3.5mm;
+    }
+
+    /* Firma del Dpto Técnico (en frame body al final) */
+    .signature-row {
+        margin-top: auto;
+        padding-top: 4mm;
+        border-top: 1px dashed var(--gc-border-soft);
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 6mm;
+        align-items: end;
+    }
+    .signature-svg {
+        width: 70mm;
+        height: 16mm;
+        display: block;
+    }
+    .signature-svg path {
+        fill: none;
+        stroke: var(--gc-cyan-bright);
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        filter: drop-shadow(0 0 4px rgba(42, 252, 214, 0.35));
+    }
+    .signature-svg .ink-main { stroke-width: 1.6; }
+    .signature-svg .ink-flourish { stroke-width: 1.1; opacity: 0.85; }
+    .sig-name {
+        font-family: 'MontserratAlt1', "Microsoft JhengHei", Arial, sans-serif;
+        font-size: 9.5pt;
+        font-weight: 800;
+        color: var(--gc-white);
+        letter-spacing: 0.06em;
+        margin-top: 1mm;
+        padding-top: 1.5mm;
+        border-top: 1px solid var(--gc-border-soft);
+        display: inline-block;
+    }
+    .sig-role {
+        font-size: 7pt;
+        color: var(--gc-muted);
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        margin-top: 0.5mm;
+    }
+    .vobo {
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5mm;
+        align-items: center;
+    }
+    .vobo-box {
+        width: 50mm;
+        height: 16mm;
+        border: 1px dashed var(--gc-border);
+        border-radius: 6px;
+        background: rgba(0, 0, 0, 0.18);
+    }
+    .vobo-label {
+        font-size: 7pt;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--gc-muted);
+        font-weight: 600;
+    }
+
+    /* ===== PRINT ===== */
+    @media print {
+        html, body {
+            background: var(--gc-deep) !important;
+            margin: 0; padding: 0; gap: 0;
+        }
+        body { display: block; padding: 0; }
+        .page {
+            width: 210mm; min-height: 297mm; margin: 0;
+            box-shadow: none;
+        }
+        .report-header, .footer-contact, .meta-bar, .analysis-frame {
+            box-shadow: none !important;
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+        * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            color-adjust: exact !important;
+        }
+    }
+</style>
+</head>
+<body>
+
+<article class="page">
+
+    <!-- HEADER -->
+    <header class="report-header">
+        <div>
+            <h1>INFORME DE ANÁLISIS PRELIMINAR</h1>
+            <p>Edge Technology Division · Formato ejecutivo de lectura rápida</p>
+        </div>
+        <div class="logo">
+            <span class="logo-text">GRIDCODE<small>Edge Technology Division</small></span>
+        </div>
+    </header>
+
+    <!-- META BAR -->
+    <div class="meta-bar">
+        <div><span>Código</span><b>IAP-GC-20260507-01</b></div>
+        <div><span>Fecha</span><b>07 / 05 / 2026</b></div>
+        <div><span>Versión</span><b>A4-1P</b></div>
+        <div class="meta-project"><span>Proyecto</span><b>Integración híbrida HYXiPOWER–Huawei mediante EMS intermedio</b></div>
+    </div>
+
+    <!-- FRAME CENTRAL DE ANÁLISIS -->
+    <section class="analysis-frame">
+        <div class="frame-head">
+            <span class="frame-head-title">Análisis</span>
+            <span class="frame-head-sub">Postura del Departamento Técnico Grid-Code</span>
+        </div>
+
+        <div class="frame-body">
+
+            <section class="subsection">
+                <h3>Contexto</h3>
+                <p>El cliente plantea integrar inversores <b>HYXiPOWER</b> ya instalados con un sistema de almacenamiento <b>Huawei</b>, mediante una capa <b>EMS intermedia</b> que actúe como orquestador único. El requerimiento llega al Departamento Técnico Grid-Code con prioridad alta, dentro de una iniciativa que busca preservar la inversión existente y evitar la sustitución de hardware en sitio.</p>
+            </section>
+
+            <section class="subsection">
+                <h3>Descripción técnica</h3>
+                <p>La arquitectura propuesta interpone un controlador EMS de terceros entre los inversores HYXiPOWER y el subsistema BMS/EMS nativo Huawei. El EMS opera como maestro lógico, traduciendo protocolos heterogéneos (Modbus TCP, SunSpec, MQTT propietario) y unificando despacho, gestión de baterías y comunicación con el operador. Los equipos finales conservan sus controladores de fábrica y reciben consignas a nivel funcional, no de bajo nivel eléctrico.</p>
+            </section>
+
+            <section class="subsection">
+                <h3>Viabilidad técnica</h3>
+                <p>La integración es <b>viable en entorno de laboratorio o piloto controlado</b>, con un único cliente, baja inyección a red y supervisión humana. La traducción de protocolos es factible a nivel funcional, pero requiere validación caso por caso de límites de seguridad, ventanas de respuesta y comportamientos en condiciones de borde. <b>No es viable como producto productizable</b> sin certificación cruzada de ambos fabricantes ni un marco normativo que respalde la operación de equipos bajo control de terceros.</p>
+            </section>
+
+            <section class="subsection">
+                <h3>Resguardos críticos</h3>
+                <p><b>Garantías:</b> ningún fabricante respalda el comportamiento de su equipo cuando es operado por un EMS de terceros; cualquier anomalía puede invalidar la garantía vigente. <b>Trazabilidad:</b> la capa intermedia debe registrar comandos y estados con sello temporal para auditoría posterior. <b>Modo seguro:</b> en caso de pérdida de comunicación con el EMS, los equipos finales deben revertir automáticamente a modo independiente y conservador. <b>Normativa:</b> la compatibilidad con marcos locales (IEC 61850, UNE 217001, certificación de inversores conectados a red) debe verificarse antes de cualquier puesta en marcha.</p>
+            </section>
+
+            <section class="subsection subsection--position">
+                <h3>Posición del equipo técnico</h3>
+                <p>El Departamento Técnico Grid-Code considera la integración <b>técnicamente viable para un piloto cerrado</b>, con riesgo medio-alto si se intenta escalar a producción sin certificación de fabricante. Recomendamos no presentar la solución al cliente como sustitutivo definitivo de una arquitectura homologada, sino como <b>paso intermedio durante una migración planificada</b>, con plazos y criterios de salida claramente definidos.</p>
+            </section>
+
+            <section class="subsection">
+                <h3>Siguiente paso propuesto</h3>
+                <p>Avanzar con una <b>PoC controlada en laboratorio Grid-Code</b> durante 90 días, midiendo latencia de comandos, comportamiento ante fallos de comunicación y consistencia de estados entre HYXiPOWER y Huawei. En paralelo, abrir conversaciones formales con ambos fabricantes para validar compatibilidad o, en su defecto, evaluar alternativas más ortodoxas (reemplazo de inversores o adopción de un EMS homologado por uno de los dos fabricantes).</p>
+            </section>
+
+            <!-- Firma del Dpto Técnico, dentro del frame -->
+            <div class="signature-row">
+                <div>
+                    <svg class="signature-svg" viewBox="0 0 280 70" xmlns="http://www.w3.org/2000/svg" aria-label="Firma manuscrita Departamento Técnico Grid-Code">
+                        <path class="ink-main" d="
+                            M 12,46
+                            C 10,18 38,10 42,32
+                            C 44,48 24,52 24,38
+                            C 24,24 44,22 52,34
+                            Q 58,44 64,34
+                            C 70,24 80,28 78,40
+                            Q 76,52 70,48
+                            L 84,40
+                            C 90,32 102,32 104,42
+                            Q 106,52 116,42
+                            C 124,32 138,30 144,42
+                            L 152,38
+                            C 162,30 178,32 178,46
+                            C 178,56 162,56 166,42
+                            C 170,28 188,28 200,38
+                            Q 212,50 224,38
+                            C 234,28 248,30 252,42
+                            Q 256,54 270,40
+                            C 276,32 274,18 260,18
+                        "/>
+                        <path class="ink-flourish" d="
+                            M 18,62
+                            C 70,58 150,58 240,62
+                            Q 258,64 250,54
+                        "/>
+                    </svg>
+                    <div class="sig-name">Departamento Técnico Grid-Code</div>
+                    <div class="sig-role">Edge Technology Division</div>
+                </div>
+                <div class="vobo">
+                    <div class="vobo-box"></div>
+                    <span class="vobo-label">Firma · Vo. Bo.</span>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <div class="footer-contact">
+        Contacto seguimiento: <a href="mailto:support@grid-code.tech">support@grid-code.tech</a>  |  <a href="https://www.grid-code.tech" target="_blank" rel="noopener">www.grid-code.tech</a>
+    </div>
+</article>
+
+</body>
+</html>
