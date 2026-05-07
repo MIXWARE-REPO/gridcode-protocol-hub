@@ -3,6 +3,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Dict, List
 
+from shared.policies.email_priority_policy_v1 import classify_priority
+
 NOISE_KEYWORDS = {
     "instagram", "newsletter", "promoción", "promocion", "sale", "oferta",
     "social", "linkedin", "facebook", "x.com", "twitter", "youtube",
@@ -21,18 +23,6 @@ class RelevantMail:
 def _is_noise(subject: str, sender: str) -> bool:
     s = f"{subject} {sender}".lower()
     return any(k in s for k in NOISE_KEYWORDS)
-
-
-def classify_priority(to_list: List[str], cc_list: List[str], laia_email: str = "laia@grid-code.tech") -> str | None:
-    to_norm = {x.strip().lower() for x in (to_list or [])}
-    cc_norm = {x.strip().lower() for x in (cc_list or [])}
-    le = laia_email.lower()
-
-    if le in to_norm:
-        return "P1"
-    if le in cc_norm:
-        return "P2"
-    return None
 
 
 def is_relevant(mail: Dict[str, Any]) -> bool:

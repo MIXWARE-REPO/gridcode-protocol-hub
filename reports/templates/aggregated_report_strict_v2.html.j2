@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <style>
+    @page { size: A4; margin: 12mm; }
+    body { font-family: Arial, sans-serif; color:#1f2328; margin:0; }
+    .sheet { width: 100%; }
+    .header { border:2px solid #0a4ea3; border-radius:6px; padding:10px 12px; margin-bottom:8px; }
+    .h1 { font-size: 18px; font-weight:700; color:#0a4ea3; }
+    .h2 { font-size: 12px; color:#4b5563; margin-top:2px; }
+    .h3 { float:right; font-size:11px; color:#4b5563; margin-top:-28px; }
+
+    .frame { border:1.6px solid #0a4ea3; border-radius:6px; padding:8px; margin-bottom:8px; }
+    .ft { font-size:11px; font-weight:700; color:#0a4ea3; margin-bottom:6px; text-transform: uppercase; }
+    .row { display:flex; gap:10px; margin-bottom:4px; }
+    .k { width: 36%; font-size:10px; color:#6b7280; }
+    .v { width: 64%; font-size:11px; font-weight:600; white-space: pre-wrap; }
+
+    .grid2 { display:grid; grid-template-columns: 1fr 1fr; gap:8px; }
+
+    .footer { margin-top:6px; border-top:1px solid #cbd5e1; padding-top:6px; font-size:10px; color:#6b7280; }
+  </style>
+</head>
+<body>
+  <div class="sheet">
+    <div class="header">
+      <div class="h1">{{ r.report_title }}</div>
+      <div class="h2">{{ r.report_subtitle }}</div>
+      <div class="h3">{{ r.report_date_cest }}</div>
+    </div>
+
+    <div class="frame">
+      <div class="ft">A. Identificación del caso</div>
+      <div class="row"><div class="k">Ticket</div><div class="v">{{ r.ticket_id }}</div></div>
+      <div class="row"><div class="k">Cliente / Sitio</div><div class="v">{{ r.customer_site }}</div></div>
+      <div class="row"><div class="k">Cargador</div><div class="v">{{ r.charger_label }} | {{ r.charger_ip }}</div></div>
+      <div class="row"><div class="k">Analista</div><div class="v">{{ r.analyst_name }}</div></div>
+    </div>
+
+    <div class="grid2">
+      <div class="frame">
+        <div class="ft">B. Estado de conectividad</div>
+        <div class="row"><div class="k">Backend</div><div class="v">{{ r.backend_status }}</div></div>
+        <div class="row"><div class="k">Placa comunicaciones</div><div class="v">{{ r.comms_board_status }}</div></div>
+        <div class="row"><div class="k">Observación</div><div class="v">{{ r.connectivity_notes }}</div></div>
+      </div>
+      <div class="frame">
+        <div class="ft">C. Endpoint OCPP</div>
+        <div class="row"><div class="k">Antes</div><div class="v">{{ r.endpoint_before }}</div></div>
+        <div class="row"><div class="k">Objetivo</div><div class="v">{{ r.endpoint_target }}</div></div>
+        <div class="row"><div class="k">Después</div><div class="v">{{ r.endpoint_after }}</div></div>
+        <div class="row"><div class="k">Persistencia</div><div class="v">{{ r.endpoint_persisted }}</div></div>
+      </div>
+    </div>
+
+    <div class="frame">
+      <div class="ft">D. Actividad y validación</div>
+      <div class="row"><div class="k">Última carga (CET/CEST)</div><div class="v">{{ r.last_charge_at_cest }}</div></div>
+      <div class="row"><div class="k">Duración</div><div class="v">{{ r.last_charge_duration }}</div></div>
+      <div class="row"><div class="k">idTag</div><div class="v">{{ r.idtag_used }}</div></div>
+      <div class="row"><div class="k">Modo Free</div><div class="v">{{ r.free_mode }}</div></div>
+      <div class="row"><div class="k">Resultado</div><div class="v">{{ r.charge_result }}</div></div>
+    </div>
+
+    <div class="grid2">
+      <div class="frame">
+        <div class="ft">E. Métricas agregadas 7 días</div>
+        <div class="row"><div class="k">Sesiones totales</div><div class="v">{{ r.sessions_total_7d }}</div></div>
+        <div class="row"><div class="k">Sesiones correctas</div><div class="v">{{ r.sessions_ok_7d }}</div></div>
+        <div class="row"><div class="k">Failed starts</div><div class="v">{{ r.failed_starts_7d }}</div></div>
+        <div class="row"><div class="k">Interrupciones</div><div class="v">{{ r.interruptions_7d }}</div></div>
+        <div class="row"><div class="k">Criticidad</div><div class="v">{{ r.criticity_band }}</div></div>
+      </div>
+      <div class="frame">
+        <div class="ft">F. Decisión técnica</div>
+        <div class="row"><div class="k">Evidencia</div><div class="v">{{ r.evidence_ref }}</div></div>
+        <div class="row"><div class="k">Acciones remotas</div><div class="v">{{ r.remote_actions }}</div></div>
+        <div class="row"><div class="k">Decisión final</div><div class="v">{{ r.final_decision }}</div></div>
+      </div>
+    </div>
+
+    <div class="footer">
+      Generado por: {{ r.generated_by }} | Versión: {{ r.report_version }}
+    </div>
+  </div>
+</body>
+</html>
