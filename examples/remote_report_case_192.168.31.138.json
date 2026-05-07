@@ -1,0 +1,18 @@
+{
+  "ticket_id": "LAB-TEST-20260507-001",
+  "charger_id": "LAB-192.168.31.138",
+  "charger_ip": "192.168.31.138",
+  "site_name": "Laboratorio",
+  "endpoint_before": "ws://192.168.31.165/ws/ocpp",
+  "endpoint_target": "ws://192.168.31.165/ws/ocpp",
+  "endpoint_after": "ws://192.168.31.165/ws/ocpp",
+  "endpoint_saved": true,
+  "last_charge_at_cet": "2026-05-05 14:56:49 CEST",
+  "last_charge_duration": "00:19:40",
+  "idtag_used": "#freecharging",
+  "free_mode_detected": true,
+  "charge_result": "Sesion registrada; idTagInfo status=Invalid en backend",
+  "log_zip_name": "OCPP_logs_20260507_110108.zip",
+  "log_zip_bytes": 5004219,
+  "analyst_name": "Laia"
+}
