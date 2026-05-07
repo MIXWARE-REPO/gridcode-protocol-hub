@@ -1,0 +1,43 @@
+{
+  "metadata": {
+    "charger_id": "LAB-192.168.31.138",
+    "client": "Laboratorio Grid Code",
+    "location": "Laboratorio Grid Code · Red local · Banco de pruebas",
+    "ticket_id": "LAB-TEST-20260507-001",
+    "analyst": "Charly Ocanto",
+    "issued_at": "2026-05-07",
+    "window_start": "2026-05-01T00:00:00+00:00",
+    "window_end": "2026-05-07T23:59:59+00:00",
+    "ip": "192.168.31.138"
+  },
+  "events": [
+    {
+      "timestamp": "2026-05-05T11:41:00+00:00",
+      "message_type": "BootNotification",
+      "payload": {
+        "chargePointSerialNumber": "WB-138-XYZ",
+        "firmwareVersion": "1.2.3",
+        "ocppVersion": "OCPP 1.6J"
+      }
+    },
+    {
+      "timestamp": "2026-05-05T11:42:00+00:00",
+      "message_type": "Authorize",
+      "payload": {
+        "idTagInfo": {
+          "status": "Accepted"
+        }
+      }
+    },
+    {
+      "timestamp": "2026-05-05T11:43:00+00:00",
+      "message_type": "StartTransaction",
+      "payload": {}
+    },
+    {
+      "timestamp": "2026-05-05T12:01:00+00:00",
+      "message_type": "StopTransaction",
+      "payload": {}
+    }
+  ]
+}
