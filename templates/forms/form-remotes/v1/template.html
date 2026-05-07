@@ -1,1 +1,1126 @@
-<!-- Subir aquí la plantilla Form-RemoteS -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Informe Remoto de Comportamiento Agregado | Grid Code</title>
+<link rel="icon" href="data:,">
+<style>
+    @page {
+        size: A4 portrait;
+        margin: 0;
+    }
+
+    @font-face {
+        font-family: 'MontserratAlt1';
+        src: url('../grid-code.tech/_astro/MontserratAlt1-ExtraBold.BOKMlsox.woff2') format('woff2'),
+             url('../grid-code.tech/_astro/MontserratAlt1-ExtraBold.DnZa15wM.woff') format('woff');
+        font-weight: 800;
+        font-style: normal;
+        font-display: swap;
+    }
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    :root {
+        --gc-deep: #00272c;
+        --gc-deep-2: #073940;
+        --gc-cyan: #169dae;
+        --gc-cyan-bright: #2afcd6;
+        --gc-cyan-soft: #1fd9f0;
+        --gc-white: #ffffff;
+        --gc-muted: #91a6b1;
+        --gc-glass: rgba(255, 255, 255, 0.06);
+        --gc-glass-strong: rgba(255, 255, 255, 0.09);
+        --gc-border: rgba(42, 252, 214, 0.18);
+        --gc-border-soft: rgba(255, 255, 255, 0.12);
+        --gc-ok: #2dd4a7;
+        --gc-ok-bg: rgba(45, 212, 167, 0.15);
+        --gc-ok-bd: rgba(45, 212, 167, 0.4);
+        --gc-warn: #ffa500;
+        --gc-warn-bg: rgba(255, 165, 0, 0.15);
+        --gc-warn-bd: rgba(255, 165, 0, 0.45);
+        --gc-bad: #ff5757;
+        --gc-bad-bg: rgba(255, 87, 87, 0.15);
+        --gc-bad-bd: rgba(255, 87, 87, 0.45);
+        --gc-att: #ff7849;
+    }
+
+    html, body {
+        font-family: "Microsoft JhengHei Light", "Microsoft JhengHei", Arial, sans-serif;
+        font-weight: 300;
+        color: var(--gc-white);
+        background: #001518;
+        -webkit-font-smoothing: antialiased;
+        font-size: 11pt;
+    }
+
+    body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1.5rem;
+        padding: 1.5rem 0;
+    }
+
+    /* A4 page */
+    .page {
+        position: relative;
+        width: 210mm;
+        min-height: 297mm;
+        padding: 12mm 12mm;
+        background: var(--gc-deep);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        gap: 3mm;
+        box-shadow: 0 18px 60px rgba(0, 0, 0, 0.5);
+    }
+
+    .page::before,
+    .page::after {
+        content: "";
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(80px);
+        z-index: 0;
+        pointer-events: none;
+    }
+    .page::before {
+        width: 220mm;
+        height: 220mm;
+        background: radial-gradient(circle, rgba(22, 157, 174, 0.30), transparent 70%);
+        top: -90mm;
+        left: -60mm;
+    }
+    .page::after {
+        width: 200mm;
+        height: 200mm;
+        background: radial-gradient(circle, rgba(42, 252, 214, 0.14), transparent 70%);
+        bottom: -90mm;
+        right: -60mm;
+    }
+
+    .page > * { position: relative; z-index: 1; }
+    .page-spacer { flex: 1; }
+
+    /* ===== HEADER (intacto) ===== */
+    .report-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 6mm 8mm;
+        background: linear-gradient(135deg, rgba(7, 57, 64, 0.85), rgba(0, 39, 44, 0.65));
+        border: 1px solid var(--gc-border);
+        border-radius: 14px;
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    }
+    .report-header h1 {
+        font-size: 14pt;
+        font-weight: 700;
+        letter-spacing: 0.01em;
+        line-height: 1.2;
+    }
+    .report-header p {
+        margin-top: 0.2rem;
+        font-size: 9pt;
+        color: var(--gc-muted);
+        font-weight: 300;
+    }
+    .logo {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+    .logo-text {
+        font-family: 'MontserratAlt1', "Microsoft JhengHei", Arial, sans-serif;
+        font-size: 16pt;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        color: var(--gc-white);
+        line-height: 1;
+    }
+    .logo-text small {
+        display: block;
+        font-family: "Microsoft JhengHei Light", "Microsoft JhengHei", Arial, sans-serif;
+        font-size: 7pt;
+        letter-spacing: 0.18em;
+        color: var(--gc-cyan-bright);
+        font-weight: 400;
+        margin-top: 1.5mm;
+        text-transform: uppercase;
+    }
+
+    /* ===== FOOTER (intacto) ===== */
+    .footer-contact {
+        text-align: center;
+        font-size: 8.5pt;
+        color: var(--gc-muted);
+        padding: 2.5mm 3mm;
+        background: rgba(0, 0, 0, 0.25);
+        border-top: 1px solid var(--gc-border-soft);
+        border-radius: 8px;
+        margin-top: auto;
+    }
+    .footer-contact a { color: var(--gc-cyan-bright); text-decoration: none; }
+    .footer-contact a:hover { text-decoration: underline; }
+
+    /* ===== BLOQUE BASE ===== */
+    .block {
+        background: var(--gc-glass);
+        border: 1px solid var(--gc-border-soft);
+        border-radius: 10px;
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.22);
+        page-break-inside: avoid;
+        break-inside: avoid;
+        padding: 3.5mm 5mm 4mm;
+        display: flex;
+        flex-direction: column;
+        gap: 2.5mm;
+    }
+    .block-title {
+        font-size: 9.5pt;
+        font-weight: 700;
+        color: var(--gc-white);
+        letter-spacing: 0.02em;
+        display: flex;
+        align-items: center;
+        gap: 2.5mm;
+        text-transform: uppercase;
+    }
+    .block-title::before {
+        content: '';
+        width: 3px;
+        height: 4mm;
+        background: var(--gc-cyan-bright);
+        border-radius: 2px;
+    }
+    .block-sub {
+        font-size: 8pt;
+        color: var(--gc-muted);
+        font-weight: 400;
+        letter-spacing: 0.04em;
+        text-transform: none;
+        margin-left: 1mm;
+    }
+
+    /* ===== B1 · IDENTIFICACIÓN ===== */
+    .ident {
+        display: grid;
+        grid-template-columns: 1.2fr 1.4fr 0.9fr;
+        gap: 5mm;
+        align-items: stretch;
+        padding: 4mm 6mm;
+    }
+    .ident-id-label {
+        font-size: 7pt;
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+        color: var(--gc-cyan-bright);
+        font-weight: 600;
+    }
+    .ident-id-value {
+        font-size: 18pt;
+        font-weight: 700;
+        line-height: 1.1;
+        margin-top: 1mm;
+        letter-spacing: 0.01em;
+    }
+    .ident-id-loc {
+        font-size: 8.5pt;
+        color: var(--gc-muted);
+        margin-top: 1.5mm;
+        line-height: 1.3;
+    }
+    .ident-meta {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2mm 5mm;
+        border-left: 1px solid var(--gc-border-soft);
+        padding-left: 5mm;
+        align-content: center;
+    }
+    .ident-meta div { display: flex; flex-direction: column; gap: 0.4mm; }
+    .ident-meta span {
+        font-size: 6.8pt;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--gc-muted);
+    }
+    .ident-meta b { font-size: 9pt; font-weight: 600; color: var(--gc-white); }
+    .ident-window {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        justify-content: center;
+        gap: 1.5mm;
+        border-left: 1px solid var(--gc-border-soft);
+        padding-left: 5mm;
+        text-align: right;
+    }
+    .window-label {
+        font-size: 6.8pt;
+        text-transform: uppercase;
+        color: var(--gc-cyan-bright);
+        letter-spacing: 0.14em;
+        font-weight: 600;
+    }
+    .window-value {
+        font-size: 11pt;
+        font-weight: 700;
+        background: linear-gradient(135deg, rgba(42, 252, 214, 0.20), rgba(22, 157, 174, 0.06));
+        border: 1px solid var(--gc-border);
+        padding: 1.2mm 4mm;
+        border-radius: 999px;
+        color: var(--gc-white);
+        white-space: nowrap;
+    }
+    .window-range { font-size: 8pt; color: var(--gc-muted); font-weight: 400; }
+
+    /* ===== B2 · RESUMEN DE SALUD ===== */
+    .score-grid {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 8mm;
+        align-items: center;
+    }
+    .score-num {
+        display: flex;
+        align-items: baseline;
+        font-weight: 700;
+        line-height: 1;
+    }
+    .score-int { font-size: 44pt; }
+    .score-pct { font-size: 18pt; color: var(--gc-cyan-bright); margin-left: 1mm; }
+    .score-band {
+        display: inline-flex;
+        align-items: center;
+        gap: 1.5mm;
+        font-size: 9pt;
+        font-weight: 700;
+        padding: 1mm 3mm;
+        border-radius: 999px;
+        margin-bottom: 2mm;
+        background: var(--gc-warn-bg);
+        color: #ffd28a;
+        border: 1px solid var(--gc-warn-bd);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+    .score-bar {
+        position: relative;
+        height: 5.5mm;
+        display: grid;
+        grid-template-columns: 40fr 10fr 20fr 30fr;
+        border-radius: 999px;
+        overflow: visible;
+    }
+    .score-bar > .z {
+        height: 100%;
+    }
+    .score-bar > .z:first-child { border-top-left-radius: 999px; border-bottom-left-radius: 999px; }
+    .score-bar > .z:last-child  { border-top-right-radius: 999px; border-bottom-right-radius: 999px; }
+    .z-crit  { background: linear-gradient(90deg, #c43232, #ff5757); }
+    .z-att   { background: linear-gradient(90deg, #ff5757, #ff7849); }
+    .z-watch { background: linear-gradient(90deg, #ff7849, #ffa500); }
+    .z-ok    { background: linear-gradient(90deg, #ffd566, #2dd4a7); }
+    .score-marker {
+        position: absolute;
+        top: -1.5mm; bottom: -1.5mm;
+        width: 1.5mm;
+        background: white;
+        border-radius: 2px;
+        box-shadow: 0 0 8px rgba(255, 255, 255, 0.7);
+        transform: translateX(-50%);
+    }
+    .score-legend {
+        margin-top: 2mm;
+        display: flex;
+        gap: 5mm;
+        font-size: 7.5pt;
+        color: var(--gc-muted);
+        flex-wrap: wrap;
+        align-items: center;
+    }
+    i.dot {
+        display: inline-block;
+        width: 2.5mm; height: 2.5mm;
+        border-radius: 50%;
+        margin-right: 1.2mm;
+        vertical-align: middle;
+    }
+    .dot-crit  { background: #ff5757; }
+    .dot-att   { background: #ff7849; }
+    .dot-watch { background: #ffa500; }
+    .dot-ok    { background: #2dd4a7; }
+    .dot-active{ background: #2afcd6; }
+    .dot-anom  { background: #ffa500; }
+    .dot-empty { background: rgba(255, 255, 255, 0.18); border: 1px solid rgba(255, 255, 255, 0.25); }
+    .dot-nodata{ background: transparent; border: 1.5px dashed rgba(255, 255, 255, 0.45); }
+
+    /* ===== B3 · LÍNEA TEMPORAL 7 DÍAS ===== */
+    .timeline {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 1.8mm;
+    }
+    .day {
+        position: relative;
+        background: rgba(0, 0, 0, 0.22);
+        border: 1px solid var(--gc-border-soft);
+        border-radius: 7px;
+        padding: 2.5mm 1.5mm 2mm;
+        text-align: center;
+        min-height: 26mm;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.8mm;
+    }
+    .day-dow {
+        font-size: 7pt;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--gc-muted);
+    }
+    .day-date {
+        font-size: 10.5pt;
+        font-weight: 700;
+        color: var(--gc-white);
+        line-height: 1;
+    }
+    .day-state {
+        font-size: 6.8pt;
+        line-height: 1.2;
+        margin-top: 0.5mm;
+        color: rgba(255, 255, 255, 0.78);
+    }
+    .day-count {
+        font-size: 9pt;
+        font-weight: 700;
+        color: var(--gc-deep);
+        background: var(--gc-cyan-bright);
+        border-radius: 999px;
+        min-width: 6mm;
+        padding: 0.3mm 1.5mm;
+        margin-top: auto;
+    }
+    .day-events {
+        position: absolute;
+        top: 1.5mm;
+        right: 1.8mm;
+        display: flex;
+        gap: 0.8mm;
+    }
+    .ev-tag {
+        font-size: 6.5pt;
+        font-weight: 700;
+        background: rgba(255, 165, 0, 0.85);
+        color: var(--gc-deep);
+        border-radius: 3px;
+        padding: 0.2mm 1mm;
+        line-height: 1.3;
+    }
+    .ev-tag.ev-bad { background: rgba(255, 87, 87, 0.9); color: white; }
+
+    .day--active {
+        border-color: var(--gc-ok-bd);
+        background: linear-gradient(180deg, rgba(45, 212, 167, 0.12), rgba(45, 212, 167, 0.04));
+    }
+    .day--active .day-count { background: var(--gc-ok); color: var(--gc-deep); }
+    .day--anom {
+        border-color: var(--gc-warn-bd);
+        background: linear-gradient(180deg, rgba(255, 165, 0, 0.14), rgba(255, 165, 0, 0.04));
+    }
+    .day--anom .day-count { background: var(--gc-warn); color: var(--gc-deep); }
+    .day--empty .day-state { color: var(--gc-muted); }
+    .day--empty .day-count { display: none; }
+    .day--nodata {
+        border-style: dashed;
+        opacity: 0.75;
+    }
+    .day--nodata .day-state { color: var(--gc-muted); font-style: italic; }
+    .day--nodata .day-count { display: none; }
+
+    .timeline-legend {
+        display: flex;
+        gap: 5mm;
+        font-size: 7.5pt;
+        color: var(--gc-muted);
+        flex-wrap: wrap;
+    }
+
+    /* ===== B4 · FLUJO OCPP ===== */
+    .flow {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 1.5mm;
+        position: relative;
+    }
+    .flow::before {
+        content: '';
+        position: absolute;
+        top: 4mm; left: 7%; right: 7%;
+        height: 1px;
+        background: linear-gradient(90deg, rgba(255,255,255,.04), rgba(255,255,255,.18), rgba(255,255,255,.04));
+        z-index: 0;
+    }
+    .step {
+        position: relative;
+        z-index: 1;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1.2mm;
+    }
+    .step-icon {
+        width: 8mm;
+        height: 8mm;
+        border-radius: 50%;
+        background: var(--gc-deep-2);
+        border: 1.5px solid var(--gc-border-soft);
+        display: grid;
+        place-items: center;
+        font-size: 11pt;
+        font-weight: 700;
+        line-height: 1;
+        color: var(--gc-cyan-bright);
+    }
+    .step--ok   .step-icon { border-color: var(--gc-ok-bd);   color: var(--gc-ok);   background: rgba(45,212,167,.08); }
+    .step--warn .step-icon { border-color: var(--gc-warn-bd); color: #ffd28a;        background: rgba(255,165,0,.08); }
+    .step--bad  .step-icon { border-color: var(--gc-bad-bd);  color: #ff9b9b;        background: rgba(255,87,87,.08); }
+    .step--none .step-icon { border-style: dashed; color: var(--gc-muted); background: rgba(255,255,255,.03); }
+
+    .step-name {
+        font-size: 7.5pt;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.92);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        line-height: 1.2;
+        min-height: 5.5mm;
+    }
+    .step-state {
+        display: inline-block;
+        font-size: 7pt;
+        font-weight: 700;
+        padding: 0.5mm 2mm;
+        border-radius: 999px;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+    }
+    .state-ok   { background: var(--gc-ok-bg);   color: #6eebbe;  border: 1px solid var(--gc-ok-bd); }
+    .state-warn { background: var(--gc-warn-bg); color: #ffd28a;  border: 1px solid var(--gc-warn-bd); }
+    .state-bad  { background: var(--gc-bad-bg);  color: #ff9b9b;  border: 1px solid var(--gc-bad-bd); }
+    .state-none { background: rgba(255,255,255,.06); color: var(--gc-muted); border: 1px solid rgba(255,255,255,.18); }
+
+    .step-desc {
+        font-size: 6.8pt;
+        line-height: 1.3;
+        color: rgba(255, 255, 255, 0.65);
+        margin-top: 0.5mm;
+    }
+
+    /* ===== B5 · MÉTRICAS AGREGADAS ===== */
+    .metrics-bar-wrap { display: flex; flex-direction: column; gap: 1.5mm; }
+    .metrics-bar {
+        display: flex;
+        height: 7mm;
+        border-radius: 6px;
+        overflow: hidden;
+        background: rgba(0, 0, 0, 0.3);
+        border: 1px solid var(--gc-border-soft);
+    }
+    .bar-seg {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 8pt;
+        font-weight: 700;
+        white-space: nowrap;
+        padding: 0 1.5mm;
+        line-height: 1;
+    }
+    .seg-ok        { background: linear-gradient(90deg, #2dd4a7, #1aaa84); color: var(--gc-deep); }
+    .seg-fail      { background: linear-gradient(90deg, #ff7849, #ff5757); color: white; }
+    .seg-interrupt { background: linear-gradient(90deg, #ffa500, #ffd566); color: var(--gc-deep); }
+    .seg-inconsist { background: rgba(255, 255, 255, 0.22); color: white; }
+    .metrics-bar-legend {
+        display: flex;
+        gap: 4mm;
+        font-size: 7.5pt;
+        color: var(--gc-muted);
+        flex-wrap: wrap;
+    }
+
+    .kpi-grid {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 2mm;
+    }
+    .kpi {
+        background: rgba(0, 0, 0, 0.22);
+        border: 1px solid var(--gc-border-soft);
+        border-radius: 6px;
+        padding: 2mm 2.5mm;
+    }
+    .kpi span {
+        display: block;
+        font-size: 6.5pt;
+        text-transform: uppercase;
+        color: var(--gc-cyan-bright);
+        letter-spacing: 0.1em;
+        font-weight: 600;
+        line-height: 1.2;
+        min-height: 6.5mm;
+    }
+    .kpi b {
+        font-size: 14pt;
+        font-weight: 700;
+        display: block;
+        margin-top: 0.5mm;
+        line-height: 1;
+    }
+    .kpi-grid--secondary { grid-template-columns: repeat(7, 1fr); margin-top: 1.5mm; }
+    .kpi-grid--secondary .kpi { padding: 1.8mm 2mm; }
+    .kpi-grid--secondary .kpi span { font-size: 6pt; min-height: 5.5mm; }
+    .kpi-grid--secondary .kpi b { font-size: 11pt; }
+
+    /* ===== B6 · DIAGNÓSTICO Y ACCIÓN ===== */
+    .diag-grid {
+        display: grid;
+        grid-template-columns: 1.6fr 1fr;
+        gap: 3mm;
+    }
+    .diag-cell {
+        background: rgba(0, 0, 0, 0.18);
+        border: 1px solid var(--gc-border-soft);
+        border-radius: 8px;
+        padding: 2.5mm 4mm;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5mm;
+    }
+    .diag-label {
+        display: block;
+        font-size: 6.8pt;
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+        color: var(--gc-cyan-bright);
+        font-weight: 700;
+    }
+    .diag-find p { font-size: 9.5pt; line-height: 1.4; color: var(--gc-white); }
+    .cause-chip {
+        display: inline-flex;
+        align-self: flex-start;
+        background: var(--gc-warn-bg);
+        color: #ffd28a;
+        border: 1px solid var(--gc-warn-bd);
+        padding: 1.5mm 3mm;
+        border-radius: 999px;
+        font-size: 9pt;
+        font-weight: 700;
+    }
+    .diag-action {
+        background: linear-gradient(135deg, rgba(42, 252, 214, 0.14), rgba(22, 157, 174, 0.04));
+        border: 1px solid var(--gc-border);
+        border-radius: 8px;
+        padding: 3mm 4mm;
+        display: flex;
+        flex-direction: column;
+        gap: 1mm;
+    }
+    .diag-action-text {
+        font-size: 12pt;
+        font-weight: 700;
+        line-height: 1.3;
+        color: var(--gc-white);
+    }
+    .diag-rule {
+        background: rgba(255, 165, 0, 0.06);
+        border: 1px solid rgba(255, 165, 0, 0.25);
+        border-left: 3px solid var(--gc-warn);
+        border-radius: 6px;
+        padding: 2.5mm 4mm;
+        display: flex;
+        flex-direction: column;
+        gap: 1mm;
+    }
+    .diag-rule p { font-size: 9pt; line-height: 1.4; color: rgba(255,255,255,.92); }
+    .diag-rule .diag-label { color: var(--gc-warn); }
+
+    /* ===== PÁGINA 2 ===== */
+    .page--continued .events {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 8.5pt;
+    }
+    .page--continued .events thead th {
+        background: rgba(22, 157, 174, 0.18);
+        color: var(--gc-white);
+        font-size: 7pt;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        font-weight: 700;
+        padding: 2mm 3mm;
+        text-align: left;
+        border-bottom: 1px solid var(--gc-border);
+    }
+    .page--continued .events tbody td {
+        padding: 2mm 3mm;
+        border-bottom: 1px solid var(--gc-border-soft);
+        line-height: 1.3;
+    }
+    .page--continued .events tbody tr:last-child td { border-bottom: none; }
+    .page--continued .events .pill {
+        display: inline-block;
+        font-size: 7pt;
+        font-weight: 700;
+        padding: 0.5mm 2mm;
+        border-radius: 999px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+    .pill-ok   { background: var(--gc-ok-bg);   color: #6eebbe; border: 1px solid var(--gc-ok-bd); }
+    .pill-warn { background: var(--gc-warn-bg); color: #ffd28a; border: 1px solid var(--gc-warn-bd); }
+    .pill-bad  { background: var(--gc-bad-bg);  color: #ff9b9b; border: 1px solid var(--gc-bad-bd); }
+
+    .interventions { display: flex; flex-direction: column; gap: 1.5mm; }
+    .intervention {
+        display: flex;
+        gap: 2.5mm;
+        align-items: flex-start;
+        padding: 2mm 3mm;
+        background: rgba(0, 0, 0, 0.18);
+        border: 1px solid var(--gc-border-soft);
+        border-radius: 6px;
+        font-size: 9pt;
+        line-height: 1.4;
+    }
+    .intervention::before {
+        content: '✓';
+        color: var(--gc-cyan-bright);
+        font-weight: 700;
+        flex-shrink: 0;
+        margin-top: 0.2mm;
+    }
+
+    .prose { font-size: 9.5pt; line-height: 1.5; color: rgba(255,255,255,.9); }
+    .prose + .prose { margin-top: 2mm; }
+
+    .endpoint-box {
+        background: rgba(0, 0, 0, 0.28);
+        border: 1px dashed var(--gc-border);
+        border-radius: 6px;
+        padding: 3mm 4mm;
+        font-size: 9pt;
+        color: var(--gc-cyan-bright);
+        word-break: break-all;
+    }
+
+    /* ===== PRINT ===== */
+    .page-break { page-break-after: always; break-after: page; }
+
+    @media print {
+        html, body {
+            background: var(--gc-deep) !important;
+            margin: 0;
+            padding: 0;
+            gap: 0;
+        }
+        body { display: block; padding: 0; }
+        .page {
+            width: 210mm;
+            min-height: 297mm;
+            margin: 0;
+            box-shadow: none;
+        }
+        .block, .report-header, .footer-contact {
+            box-shadow: none !important;
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+        * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            color-adjust: exact !important;
+        }
+    }
+</style>
+</head>
+<body>
+
+<!-- ============================================================ -->
+<!-- PÁGINA 1 - Diagnóstico resumido                                -->
+<!-- ============================================================ -->
+<article class="page page-break">
+
+    <!-- HEADER (intacto) -->
+    <header class="report-header">
+        <div>
+            <h1>INFORME REMOTO DE COMPORTAMIENTO AGREGADO</h1>
+            <p>Diagnostico OCPP multisesion con criterio de criticidad</p>
+        </div>
+        <div class="logo">
+            <span class="logo-text">GRIDCODE<small>Transición Energética</small></span>
+        </div>
+    </header>
+
+    <!-- B1 · IDENTIFICACIÓN -->
+    <section class="block ident">
+        <div>
+            <div class="ident-id-label">Cargador analizado</div>
+            <div class="ident-id-value">CHG-COL-A14</div>
+            <div class="ident-id-loc">Estacionamiento Colonial · Nivel -1 · Plaza 14</div>
+        </div>
+        <div class="ident-meta">
+            <div><span>Ticket</span><b>REMOTE-AGG-0002</b></div>
+            <div><span>Cliente</span><b>Colonial</b></div>
+            <div><span>Analista</span><b>Carlos Ocanto</b></div>
+            <div><span>Emisión</span><b>2026-05-07</b></div>
+            <div><span>Fuente</span><b>Log OCPP</b></div>
+            <div><span>Unidad</span><b>Cargador individual</b></div>
+        </div>
+        <div class="ident-window">
+            <span class="window-label">Ventana analizada</span>
+            <span class="window-value">Últimos 7 días</span>
+            <span class="window-range">2026-05-01 → 2026-05-07</span>
+        </div>
+    </section>
+
+    <!-- B2 · RESUMEN DE SALUD -->
+    <section class="block">
+        <div class="block-title">Resumen de salud operativa</div>
+        <div class="score-grid">
+            <div class="score-num">
+                <span class="score-int">63</span><span class="score-pct">%</span>
+            </div>
+            <div>
+                <span class="score-band">● Seguimiento activo</span>
+                <div class="score-bar">
+                    <div class="z z-crit"></div>
+                    <div class="z z-att"></div>
+                    <div class="z z-watch"></div>
+                    <div class="z z-ok"></div>
+                    <div class="score-marker" style="left:63%"></div>
+                </div>
+                <div class="score-legend">
+                    <span><i class="dot dot-crit"></i>&lt;40 prioridad máxima</span>
+                    <span><i class="dot dot-att"></i>40–50 atención alta</span>
+                    <span><i class="dot dot-watch"></i>50–70 seguimiento activo</span>
+                    <span><i class="dot dot-ok"></i>&gt;70 sano</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- B3 · LÍNEA TEMPORAL 7 DÍAS -->
+    <section class="block">
+        <div class="block-title">Actividad registrada por día <span class="block-sub">· últimos 7 días</span></div>
+        <div class="timeline">
+            <div class="day day--active">
+                <div class="day-dow">Vie</div>
+                <div class="day-date">01 May</div>
+                <div class="day-state">Carga registrada</div>
+                <div class="day-count">5</div>
+            </div>
+            <div class="day day--active">
+                <div class="day-dow">Sáb</div>
+                <div class="day-date">02 May</div>
+                <div class="day-state">Carga registrada</div>
+                <div class="day-count">8</div>
+            </div>
+            <div class="day day--empty">
+                <div class="day-dow">Dom</div>
+                <div class="day-date">03 May</div>
+                <div class="day-state">Sin carga registrada</div>
+            </div>
+            <div class="day day--active">
+                <div class="day-events"><span class="ev-tag" title="Reinicio detectado">↻</span></div>
+                <div class="day-dow">Lun</div>
+                <div class="day-date">04 May</div>
+                <div class="day-state">Carga registrada</div>
+                <div class="day-count">12</div>
+            </div>
+            <div class="day day--anom">
+                <div class="day-events"><span class="ev-tag ev-bad" title="Cierre inconsistente">!</span></div>
+                <div class="day-dow">Mar</div>
+                <div class="day-date">05 May</div>
+                <div class="day-state">Carga con anomalía</div>
+                <div class="day-count">14</div>
+            </div>
+            <div class="day day--anom">
+                <div class="day-events"><span class="ev-tag" title="Boot múltiple">↻↻</span></div>
+                <div class="day-dow">Mié</div>
+                <div class="day-date">06 May</div>
+                <div class="day-state">Carga con anomalía</div>
+                <div class="day-count">18</div>
+            </div>
+            <div class="day day--active">
+                <div class="day-dow">Jue</div>
+                <div class="day-date">07 May</div>
+                <div class="day-state">Carga registrada</div>
+                <div class="day-count">7</div>
+            </div>
+        </div>
+        <div class="timeline-legend">
+            <span><i class="dot dot-active"></i>Carga registrada</span>
+            <span><i class="dot dot-anom"></i>Carga con anomalía</span>
+            <span><i class="dot dot-empty"></i>Sin carga registrada</span>
+            <span><i class="dot dot-nodata"></i>Sin evidencia suficiente</span>
+            <span style="margin-left:auto;color:var(--gc-muted);">↻ reinicio · !&nbsp;cierre inconsistente</span>
+        </div>
+    </section>
+
+    <!-- B4 · FLUJO OCPP -->
+    <section class="block">
+        <div class="block-title">Flujo operativo OCPP</div>
+        <div class="flow">
+            <div class="step step--ok">
+                <div class="step-icon">✓</div>
+                <div class="step-name">Acceso remoto</div>
+                <div class="step-state state-ok">OK</div>
+                <div class="step-desc">Conexión estable al cargador.</div>
+            </div>
+            <div class="step step--ok">
+                <div class="step-icon">⇄</div>
+                <div class="step-name">Backend</div>
+                <div class="step-state state-ok">OK</div>
+                <div class="step-desc">Sin desconexiones registradas.</div>
+            </div>
+            <div class="step step--warn">
+                <div class="step-icon">⟳</div>
+                <div class="step-name">Boot / Reinicios</div>
+                <div class="step-state state-warn">Parcial</div>
+                <div class="step-desc">3 reinicios detectados en el período.</div>
+            </div>
+            <div class="step step--ok">
+                <div class="step-icon">⌘</div>
+                <div class="step-name">Autorización</div>
+                <div class="step-state state-ok">OK</div>
+                <div class="step-desc">RFID / App válida en el 100% de intentos.</div>
+            </div>
+            <div class="step step--warn">
+                <div class="step-icon">▶</div>
+                <div class="step-name">Inicio sesión</div>
+                <div class="step-state state-warn">Parcial</div>
+                <div class="step-desc">Apertura con demoras esporádicas.</div>
+            </div>
+            <div class="step step--bad">
+                <div class="step-icon">∿</div>
+                <div class="step-name">Continuidad</div>
+                <div class="step-state state-bad">Inconsistente</div>
+                <div class="step-desc">6 interrupciones de sesión detectadas.</div>
+            </div>
+            <div class="step step--bad">
+                <div class="step-icon">■</div>
+                <div class="step-name">Cierre sesión</div>
+                <div class="step-state state-bad">Inconsistente</div>
+                <div class="step-desc">Corte temprano del usuario dominante.</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- B5 · MÉTRICAS AGREGADAS -->
+    <section class="block">
+        <div class="block-title">Métricas agregadas del período</div>
+        <div class="metrics-bar-wrap">
+            <div class="metrics-bar">
+                <div class="bar-seg seg-ok"        style="width:62.5%">40 exitosas</div>
+                <div class="bar-seg seg-fail"      style="width:21.9%">14 fallidas</div>
+                <div class="bar-seg seg-interrupt" style="width:9.4%">6 interrumpidas</div>
+                <div class="bar-seg seg-inconsist" style="width:6.2%">4 inconsistentes</div>
+            </div>
+            <div class="metrics-bar-legend">
+                <span><i class="dot" style="background:#2dd4a7"></i>Exitosas</span>
+                <span><i class="dot" style="background:#ff5757"></i>Fallidas</span>
+                <span><i class="dot" style="background:#ffa500"></i>Interrumpidas</span>
+                <span><i class="dot" style="background:rgba(255,255,255,.3)"></i>Inconsistentes</span>
+                <span style="margin-left:auto;color:var(--gc-muted);">Total · 64 sesiones / 7 días</span>
+            </div>
+        </div>
+
+        <div class="kpi-grid">
+            <div class="kpi"><span>Sesiones totales</span><b>64</b></div>
+            <div class="kpi"><span>Sesiones exitosas</span><b>40</b></div>
+            <div class="kpi"><span>Cargas fallidas referidas</span><b>14</b></div>
+            <div class="kpi"><span>Interrupciones de sesión</span><b>6</b></div>
+            <div class="kpi"><span>Reinicios detectados</span><b>3</b></div>
+            <div class="kpi"><span>Días con actividad</span><b>6/7</b></div>
+        </div>
+
+        <div class="kpi-grid kpi-grid--secondary">
+            <div class="kpi"><span>Días sin actividad</span><b>1</b></div>
+            <div class="kpi"><span>Desconexiones backend</span><b>0</b></div>
+            <div class="kpi"><span>BootNotification / día</span><b>1.4</b></div>
+            <div class="kpi"><span>Cierres automáticos</span><b>9</b></div>
+            <div class="kpi"><span>Rechazos auth.</span><b>0</b></div>
+            <div class="kpi"><span>Sin cierre consistente</span><b>4</b></div>
+            <div class="kpi"><span>Efectividad</span><b>63%</b></div>
+        </div>
+    </section>
+
+    <!-- B6 · DIAGNÓSTICO Y ACCIÓN -->
+    <section class="block">
+        <div class="block-title">Diagnóstico y siguiente paso</div>
+        <div class="diag-grid">
+            <div class="diag-cell diag-find">
+                <span class="diag-label">Hallazgo dominante</span>
+                <p>Cierre de sesión inconsistente con corte temprano del usuario, acompañado de 3 reinicios y 6 interrupciones puntuales sin pérdida de backend.</p>
+            </div>
+            <div class="diag-cell">
+                <span class="diag-label">Causa probable principal</span>
+                <span class="cause-chip">Mala secuencia de uso</span>
+                <span style="font-size:8pt;color:var(--gc-muted);line-height:1.3;">Externalidad operativa: el equipo responde correctamente al backend y a la autorización; el corte se origina del lado del usuario.</span>
+            </div>
+        </div>
+
+        <div class="diag-action">
+            <span class="diag-label">Acción técnica recomendada</span>
+            <p class="diag-action-text">Seguimiento activo remoto — sin onsite inmediato.</p>
+        </div>
+
+        <div class="diag-rule">
+            <span class="diag-label">Condición de escalado</span>
+            <p>Degradación sostenida &lt;50% en los próximos 3 ciclos de análisis o aparición de desconexiones backend recurrentes.</p>
+        </div>
+    </section>
+
+    <div class="page-spacer"></div>
+
+    <!-- FOOTER (intacto) -->
+    <div class="footer-contact">
+        Contacto seguimiento: <a href="mailto:support@grid-code.tech">support@grid-code.tech</a>  |  <a href="https://www.grid-code.tech" target="_blank" rel="noopener">www.grid-code.tech</a>
+    </div>
+</article>
+
+
+<!-- ============================================================ -->
+<!-- PÁGINA 2 - Detalle de eventos y observaciones                 -->
+<!-- ============================================================ -->
+<article class="page page--continued">
+
+    <!-- HEADER (intacto, repetido) -->
+    <header class="report-header">
+        <div>
+            <h1>INFORME REMOTO DE COMPORTAMIENTO AGREGADO</h1>
+            <p>Diagnostico OCPP multisesion con criterio de criticidad</p>
+        </div>
+        <div class="logo">
+            <span class="logo-text">GRIDCODE<small>Transición Energética</small></span>
+        </div>
+    </header>
+
+    <!-- Subtítulo de continuidad -->
+    <section class="block">
+        <div class="block-title">Detalle de eventos y observaciones <span class="block-sub">· cargador CHG-COL-A14 · últimos 7 días</span></div>
+        <table class="events">
+            <thead>
+                <tr>
+                    <th style="width:18mm;">Fecha</th>
+                    <th style="width:18mm;">Hora</th>
+                    <th>Evento</th>
+                    <th style="width:28mm;">Estado</th>
+                    <th>Observación</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>04 May</td>
+                    <td>09:14</td>
+                    <td>BootNotification</td>
+                    <td><span class="pill pill-warn">Reinicio</span></td>
+                    <td>Reinicio espontáneo, recuperación &lt; 30s.</td>
+                </tr>
+                <tr>
+                    <td>05 May</td>
+                    <td>11:42</td>
+                    <td>StopTransaction sin EnergyMeter final</td>
+                    <td><span class="pill pill-bad">Cierre inconsistente</span></td>
+                    <td>Sesión cerrada del lado del usuario sin secuencia completa.</td>
+                </tr>
+                <tr>
+                    <td>05 May</td>
+                    <td>16:03</td>
+                    <td>StatusNotification: SuspendedEV</td>
+                    <td><span class="pill pill-warn">Interrupción</span></td>
+                    <td>Vehículo suspendió la sesión; el cargador respondió correctamente.</td>
+                </tr>
+                <tr>
+                    <td>06 May</td>
+                    <td>07:21</td>
+                    <td>BootNotification ×2 (boot múltiple)</td>
+                    <td><span class="pill pill-warn">Reinicio</span></td>
+                    <td>Dos boots seguidos en 4 min. Sin caída de backend.</td>
+                </tr>
+                <tr>
+                    <td>06 May</td>
+                    <td>14:55</td>
+                    <td>StopTransaction sin EnergyMeter final</td>
+                    <td><span class="pill pill-bad">Cierre inconsistente</span></td>
+                    <td>Patrón coherente con desconexión manual del cable.</td>
+                </tr>
+                <tr>
+                    <td>07 May</td>
+                    <td>10:08</td>
+                    <td>BootNotification</td>
+                    <td><span class="pill pill-warn">Reinicio</span></td>
+                    <td>Tercer reinicio del período. Sin afectación del servicio.</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- Interpretación técnica -->
+    <section class="block">
+        <div class="block-title">Interpretación técnica</div>
+        <p class="prose">El equipo presenta autorización RFID/App estable y trazabilidad backend continua durante los 7 días. La degradación observada se concentra en el <b>cierre de sesión</b>, donde 4 transacciones finalizaron sin secuencia completa (StopTransaction sin EnergyMeter final), patrón típico de desconexión manual del usuario antes del flujo OCPP.</p>
+        <p class="prose">Los 3 reinicios distribuidos no coinciden temporalmente con los cierres inconsistentes, por lo que se descarta correlación con falla de hardware o caída de firmware. La salud operativa de <b>63%</b> se mantiene dentro de la banda <b>seguimiento activo</b>, sin necesidad de intervención presencial inmediata.</p>
+    </section>
+
+    <!-- Intervenciones aplicadas -->
+    <section class="block">
+        <div class="block-title">Intervenciones remotas aplicadas</div>
+        <div class="interventions">
+            <div class="intervention">Ajuste de parámetros de timeout y validación de cierre.</div>
+            <div class="intervention">Revisión de firmware y estado de conectividad.</div>
+            <div class="intervention">Verificación de backend / autorizaciones y consistencia de eventos.</div>
+            <div class="intervention">Recomendación al cliente: secuencia correcta de inicio / cierre para evitar falsos fallos.</div>
+        </div>
+    </section>
+
+    <!-- Recomendación ampliada -->
+    <section class="block">
+        <div class="block-title">Recomendación ampliada</div>
+        <p class="prose">Se sugiere mantener el cargador <b>CHG-COL-A14</b> bajo seguimiento activo remoto durante los próximos 3 ciclos de análisis (21 días). Si la efectividad cae por debajo del 50% o aparecen desconexiones backend recurrentes, escalar a soporte onsite para revisión física de cable, conector y placa de control.</p>
+        <p class="prose">Paralelamente, comunicar al operador de Colonial el patrón identificado (corte temprano del usuario) y reforzar la señalización de la plaza con indicaciones de cierre correcto de sesión. Esta acción reduce los falsos fallos atribuidos al equipo.</p>
+    </section>
+
+    <!-- Endpoint -->
+    <section class="block">
+        <div class="block-title">Evidencia · Endpoint de validación</div>
+        <div class="endpoint-box">https://logs.grid-code.tech/sessions/CHG-COL-A14?from=2026-05-01&to=2026-05-07</div>
+    </section>
+
+    <div class="page-spacer"></div>
+
+    <!-- FOOTER (intacto, repetido) -->
+    <div class="footer-contact">
+        Contacto seguimiento: <a href="mailto:support@grid-code.tech">support@grid-code.tech</a>  |  <a href="https://www.grid-code.tech" target="_blank" rel="noopener">www.grid-code.tech</a>
+    </div>
+</article>
+
+</body>
+</html>
