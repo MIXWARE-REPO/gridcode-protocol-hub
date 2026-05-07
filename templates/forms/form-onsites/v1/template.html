@@ -1,1 +1,973 @@
-<!-- Subir aquí la plantilla Form-OnsiteS -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reporte de Verificación Onsite | Grid Code</title>
+<link rel="icon" href="data:,">
+<style>
+    @page {
+        size: A4 portrait;
+        margin: 0;
+    }
+
+    @font-face {
+        font-family: 'MontserratAlt1';
+        src: url('../grid-code.tech/_astro/MontserratAlt1-ExtraBold.BOKMlsox.woff2') format('woff2'),
+             url('../grid-code.tech/_astro/MontserratAlt1-ExtraBold.DnZa15wM.woff') format('woff');
+        font-weight: 800;
+        font-style: normal;
+        font-display: swap;
+    }
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    :root {
+        --gc-deep: #00272c;
+        --gc-deep-2: #073940;
+        --gc-cyan: #169dae;
+        --gc-cyan-bright: #2afcd6;
+        --gc-cyan-soft: #1fd9f0;
+        --gc-white: #ffffff;
+        --gc-muted: #91a6b1;
+        --gc-glass: rgba(255, 255, 255, 0.06);
+        --gc-glass-strong: rgba(255, 255, 255, 0.09);
+        --gc-border: rgba(42, 252, 214, 0.18);
+        --gc-border-soft: rgba(255, 255, 255, 0.12);
+        --gc-ok: #2dd4a7;
+        --gc-ok-bg: rgba(45, 212, 167, 0.15);
+        --gc-ok-bd: rgba(45, 212, 167, 0.4);
+        --gc-warn: #ffa500;
+        --gc-warn-bg: rgba(255, 165, 0, 0.15);
+        --gc-warn-bd: rgba(255, 165, 0, 0.45);
+        --gc-bad: #ff5757;
+        --gc-bad-bg: rgba(255, 87, 87, 0.15);
+        --gc-bad-bd: rgba(255, 87, 87, 0.45);
+    }
+
+    html, body {
+        font-family: "Microsoft JhengHei Light", "Microsoft JhengHei", Arial, sans-serif;
+        font-weight: 300;
+        color: var(--gc-white);
+        background: #001518;
+        -webkit-font-smoothing: antialiased;
+        font-size: 11pt;
+    }
+
+    body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1.5rem;
+        padding: 1.5rem 0;
+    }
+
+    /* A4 page */
+    .page {
+        position: relative;
+        width: 210mm;
+        min-height: 297mm;
+        padding: 12mm 12mm;
+        background: var(--gc-deep);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        gap: 3mm;
+        box-shadow: 0 18px 60px rgba(0, 0, 0, 0.5);
+    }
+    .page::before, .page::after {
+        content: "";
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(80px);
+        z-index: 0;
+        pointer-events: none;
+    }
+    .page::before {
+        width: 220mm; height: 220mm;
+        background: radial-gradient(circle, rgba(22, 157, 174, 0.30), transparent 70%);
+        top: -90mm; left: -60mm;
+    }
+    .page::after {
+        width: 200mm; height: 200mm;
+        background: radial-gradient(circle, rgba(42, 252, 214, 0.14), transparent 70%);
+        bottom: -90mm; right: -60mm;
+    }
+    .page > * { position: relative; z-index: 1; }
+    .page-spacer { flex: 1; }
+
+    /* ===== HEADER ===== */
+    .report-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 6mm 8mm;
+        background: linear-gradient(135deg, rgba(7, 57, 64, 0.85), rgba(0, 39, 44, 0.65));
+        border: 1px solid var(--gc-border);
+        border-radius: 14px;
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    }
+    .report-header h1 {
+        font-size: 14pt;
+        font-weight: 700;
+        letter-spacing: 0.01em;
+        line-height: 1.2;
+    }
+    .report-header p {
+        margin-top: 0.2rem;
+        font-size: 9pt;
+        color: var(--gc-muted);
+        font-weight: 300;
+    }
+    .logo {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+    .logo-text {
+        font-family: 'MontserratAlt1', "Microsoft JhengHei", Arial, sans-serif;
+        font-size: 16pt;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        color: var(--gc-white);
+        line-height: 1;
+    }
+    .logo-text small {
+        display: block;
+        font-family: "Microsoft JhengHei Light", "Microsoft JhengHei", Arial, sans-serif;
+        font-size: 7pt;
+        letter-spacing: 0.18em;
+        color: var(--gc-cyan-bright);
+        font-weight: 400;
+        margin-top: 1.5mm;
+        text-transform: uppercase;
+    }
+
+    /* ===== FOOTER ===== */
+    .footer-contact {
+        text-align: center;
+        font-size: 8.5pt;
+        color: var(--gc-muted);
+        padding: 2.5mm 3mm;
+        background: rgba(0, 0, 0, 0.25);
+        border-top: 1px solid var(--gc-border-soft);
+        border-radius: 8px;
+        margin-top: auto;
+    }
+    .footer-contact a { color: var(--gc-cyan-bright); text-decoration: none; }
+    .footer-contact a:hover { text-decoration: underline; }
+
+    /* ===== BLOQUE BASE ===== */
+    .block {
+        background: var(--gc-glass);
+        border: 1px solid var(--gc-border-soft);
+        border-radius: 10px;
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.22);
+        page-break-inside: avoid;
+        break-inside: avoid;
+        padding: 3.5mm 5mm 4mm;
+        display: flex;
+        flex-direction: column;
+        gap: 2.5mm;
+    }
+    .block-title {
+        font-size: 9.5pt;
+        font-weight: 700;
+        color: var(--gc-white);
+        letter-spacing: 0.02em;
+        display: flex;
+        align-items: center;
+        gap: 2mm;
+        text-transform: uppercase;
+    }
+    .block-num {
+        display: inline-grid;
+        place-items: center;
+        width: 6mm; height: 6mm;
+        background: var(--gc-cyan-bright);
+        color: var(--gc-deep);
+        font-weight: 800;
+        font-size: 9pt;
+        border-radius: 4px;
+        flex-shrink: 0;
+    }
+    .block-sub {
+        font-size: 8pt;
+        color: var(--gc-muted);
+        font-weight: 400;
+        letter-spacing: 0.04em;
+        text-transform: none;
+        margin-left: 1mm;
+    }
+
+    /* ===== Form fields ===== */
+    .field { display: flex; flex-direction: column; gap: 1mm; }
+    .field label {
+        font-size: 6.8pt;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--gc-cyan-bright);
+        font-weight: 600;
+    }
+    .field input, .field select, .field textarea {
+        font-family: inherit;
+        font-weight: 300;
+        font-size: 9.5pt;
+        color: var(--gc-white);
+        background: rgba(0, 0, 0, 0.25);
+        border: 1px solid var(--gc-border-soft);
+        border-radius: 5px;
+        padding: 1.6mm 2.5mm;
+        outline: none;
+        transition: border-color .2s, box-shadow .2s, background .2s;
+    }
+    .field input::placeholder, .field textarea::placeholder { color: rgba(255,255,255,0.35); }
+    .field input:focus, .field select:focus, .field textarea:focus {
+        border-color: var(--gc-cyan-bright);
+        box-shadow: 0 0 0 2px rgba(42, 252, 214, 0.15);
+        background: rgba(0, 0, 0, 0.35);
+    }
+    .field textarea { resize: vertical; min-height: 18mm; line-height: 1.4; }
+    .field--prefilled input { background: rgba(42, 252, 214, 0.06); border-color: var(--gc-border); }
+
+    /* ===== B1 · DATOS ===== */
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2mm 3mm; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2mm 3mm; }
+    .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2mm 3mm; }
+
+    /* ===== B2 · RUTA ===== */
+    .route {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 1.5mm;
+        position: relative;
+        margin-top: 1mm;
+    }
+    .route::before {
+        content: '';
+        position: absolute;
+        top: 4.5mm; left: 9%; right: 9%;
+        height: 2px;
+        background: linear-gradient(90deg, var(--gc-ok-bd) 0%, var(--gc-ok-bd) 70%, rgba(255,255,255,.12) 70%, rgba(255,255,255,.12) 100%);
+        z-index: 0;
+    }
+    .route-step {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 1.5mm;
+    }
+    .route-circle {
+        width: 9mm; height: 9mm;
+        border-radius: 50%;
+        background: var(--gc-deep-2);
+        border: 1.5px solid var(--gc-border-soft);
+        display: grid;
+        place-items: center;
+        font-size: 10pt;
+        font-weight: 800;
+        font-family: 'MontserratAlt1', "Microsoft JhengHei", Arial, sans-serif;
+        color: var(--gc-muted);
+    }
+    .route-step--done .route-circle {
+        background: var(--gc-ok);
+        border-color: var(--gc-ok);
+        color: var(--gc-deep);
+    }
+    .route-step--current .route-circle {
+        background: var(--gc-cyan-bright);
+        border-color: var(--gc-cyan-bright);
+        color: var(--gc-deep);
+        width: 11mm; height: 11mm;
+        font-size: 12pt;
+        box-shadow: 0 0 0 3px rgba(42, 252, 214, 0.18), 0 0 16px rgba(42, 252, 214, 0.45);
+    }
+    .route-step--pending .route-circle {
+        border-style: dashed;
+    }
+    .route-name {
+        font-size: 7.8pt;
+        font-weight: 600;
+        line-height: 1.2;
+        color: rgba(255, 255, 255, 0.92);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        min-height: 7mm;
+    }
+    .route-step--current .route-name { color: var(--gc-cyan-bright); }
+    .route-step--pending .route-name { color: var(--gc-muted); }
+    .route-desc {
+        font-size: 6.8pt;
+        line-height: 1.3;
+        color: rgba(255, 255, 255, 0.65);
+    }
+    .route-step--current .route-desc { color: rgba(255, 255, 255, 0.92); font-weight: 600; }
+
+    /* ===== B3 · MOTIVO ===== */
+    .motivo {
+        background: linear-gradient(135deg, rgba(42, 252, 214, 0.10), rgba(22, 157, 174, 0.04));
+        border: 1px solid var(--gc-border);
+        border-left: 3px solid var(--gc-cyan-bright);
+        border-radius: 6px;
+        padding: 3mm 4mm;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5mm;
+    }
+    .motivo-label {
+        font-size: 6.8pt;
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+        color: var(--gc-cyan-bright);
+        font-weight: 700;
+    }
+    .motivo-text {
+        font-size: 9.5pt;
+        line-height: 1.4;
+        color: var(--gc-white);
+    }
+    .motivo-meta {
+        font-size: 7.5pt;
+        color: var(--gc-muted);
+        font-style: italic;
+    }
+    .motivo-tag {
+        display: inline-block;
+        background: var(--gc-warn-bg);
+        color: #ffd28a;
+        border: 1px solid var(--gc-warn-bd);
+        padding: 0.5mm 2mm;
+        border-radius: 999px;
+        font-size: 7.5pt;
+        font-weight: 700;
+        margin-right: 1.5mm;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+    }
+
+    /* ===== B4 · CHECKLIST ===== */
+    .checklist {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        font-size: 8.5pt;
+    }
+    .checklist thead th {
+        background: rgba(22, 157, 174, 0.18);
+        color: var(--gc-white);
+        font-size: 6.8pt;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        font-weight: 700;
+        padding: 2mm 2mm;
+        text-align: left;
+        border-bottom: 1px solid var(--gc-border);
+    }
+    .checklist thead th:first-child { border-top-left-radius: 6px; }
+    .checklist thead th:last-child { border-top-right-radius: 6px; }
+    .checklist tbody td {
+        padding: 1.4mm 2mm;
+        border-bottom: 1px solid var(--gc-border-soft);
+        vertical-align: middle;
+        line-height: 1.25;
+    }
+    .checklist tbody tr:last-child td { border-bottom: none; }
+    .checklist tbody tr:nth-child(even) td { background: rgba(255, 255, 255, 0.02); }
+    .checklist .row-num {
+        display: inline-block;
+        width: 5mm; height: 5mm;
+        background: rgba(42, 252, 214, 0.12);
+        color: var(--gc-cyan-bright);
+        border: 1px solid var(--gc-border);
+        border-radius: 3px;
+        text-align: center;
+        line-height: 5mm;
+        font-weight: 700;
+        font-size: 7pt;
+        margin-right: 1.5mm;
+    }
+    .checklist .row-name {
+        font-weight: 600;
+        color: var(--gc-white);
+        font-size: 8.5pt;
+    }
+    .checklist select, .checklist input {
+        width: 100%;
+        font-family: inherit;
+        font-weight: 300;
+        font-size: 8pt;
+        color: var(--gc-white);
+        background: rgba(0, 0, 0, 0.25);
+        border: 1px solid var(--gc-border-soft);
+        border-radius: 4px;
+        padding: 1mm 2mm;
+        outline: none;
+    }
+    .checklist select:focus, .checklist input:focus {
+        border-color: var(--gc-cyan-bright);
+        background: rgba(0, 0, 0, 0.35);
+    }
+    .checklist input::placeholder { color: rgba(255, 255, 255, 0.3); }
+    .checklist .col-status select { font-weight: 700; }
+    .checklist .col-action select { text-align: center; }
+
+    /* Status colorization via option */
+    .checklist select.status-ok { color: #6eebbe; border-color: var(--gc-ok-bd); background: var(--gc-ok-bg); }
+    .checklist select.status-bad { color: #ff9b9b; border-color: var(--gc-bad-bd); background: var(--gc-bad-bg); }
+    .checklist select.status-warn { color: #ffd28a; border-color: var(--gc-warn-bd); background: var(--gc-warn-bg); }
+
+    /* ===== B5 · RESULTADO ===== */
+    .result-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 3mm;
+    }
+    .result-cell {
+        background: rgba(0, 0, 0, 0.18);
+        border: 1px solid var(--gc-border-soft);
+        border-radius: 8px;
+        padding: 3mm 4mm;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5mm;
+    }
+    .result-cell.result-cell--main {
+        background: linear-gradient(135deg, rgba(42, 252, 214, 0.12), rgba(22, 157, 174, 0.04));
+        border-color: var(--gc-border);
+    }
+    .result-label {
+        font-size: 6.8pt;
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+        color: var(--gc-cyan-bright);
+        font-weight: 700;
+    }
+    .result-cell select {
+        width: 100%;
+        font-family: inherit;
+        font-size: 10pt;
+        font-weight: 700;
+        color: var(--gc-white);
+        background: rgba(0, 0, 0, 0.3);
+        border: 1px solid var(--gc-border-soft);
+        border-radius: 5px;
+        padding: 2mm 3mm;
+        outline: none;
+    }
+    .result-cell select:focus { border-color: var(--gc-cyan-bright); }
+    .result-hint {
+        font-size: 7pt;
+        color: var(--gc-muted);
+        font-style: italic;
+        line-height: 1.3;
+    }
+
+    /* ===== B7 · FOTOS ===== */
+    .photos {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 3mm;
+    }
+    .photo-slot {
+        background: rgba(0, 0, 0, 0.22);
+        border: 1.5px dashed var(--gc-border);
+        border-radius: 8px;
+        padding: 2.5mm;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5mm;
+        min-height: 38mm;
+    }
+    .photo-slot-title {
+        font-size: 7pt;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--gc-cyan-bright);
+        font-weight: 700;
+    }
+    .photo-slot-desc {
+        font-size: 7.5pt;
+        color: rgba(255, 255, 255, 0.85);
+        line-height: 1.3;
+        font-weight: 600;
+    }
+    .photo-frame {
+        flex: 1;
+        background: rgba(0, 0, 0, 0.35);
+        border: 1px solid var(--gc-border-soft);
+        border-radius: 5px;
+        display: grid;
+        place-items: center;
+        color: rgba(255, 255, 255, 0.25);
+        font-size: 16pt;
+        min-height: 18mm;
+    }
+    .photo-frame::before {
+        content: '＋';
+        font-weight: 200;
+    }
+    .photo-comment {
+        width: 100%;
+        font-family: inherit;
+        font-size: 7.5pt;
+        font-weight: 300;
+        color: var(--gc-white);
+        background: rgba(0, 0, 0, 0.25);
+        border: 1px solid var(--gc-border-soft);
+        border-radius: 4px;
+        padding: 1mm 2mm;
+        outline: none;
+    }
+    .photo-comment::placeholder { color: rgba(255, 255, 255, 0.3); }
+    .photo-comment:focus { border-color: var(--gc-cyan-bright); }
+    .photos-hint {
+        font-size: 7.5pt;
+        color: var(--gc-warn);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin-top: 1mm;
+    }
+
+    /* ===== B8 · APROBACIÓN ===== */
+    .approval {
+        display: grid;
+        grid-template-columns: 1.2fr 1fr 1.4fr;
+        gap: 3mm;
+        align-items: stretch;
+    }
+    .approval > .field { background: rgba(0, 0, 0, 0.18); border: 1px solid var(--gc-border-soft); border-radius: 8px; padding: 3mm 3.5mm; gap: 1.5mm; }
+    .signature-box {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px dashed var(--gc-border);
+        border-radius: 6px;
+        height: 18mm;
+        margin-top: 1mm;
+        display: grid;
+        place-items: center;
+        color: rgba(255, 255, 255, 0.25);
+        font-size: 7.5pt;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+    }
+
+    /* ===== Pills genéricos para indicar páginas ===== */
+    .page-pill {
+        display: inline-block;
+        font-size: 7pt;
+        font-weight: 700;
+        padding: 0.5mm 2mm;
+        background: rgba(42, 252, 214, 0.12);
+        color: var(--gc-cyan-bright);
+        border: 1px solid var(--gc-border);
+        border-radius: 999px;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+    }
+
+    /* ===== PRINT ===== */
+    .page-break { page-break-after: always; break-after: page; }
+
+    @media print {
+        html, body {
+            background: var(--gc-deep) !important;
+            margin: 0; padding: 0; gap: 0;
+        }
+        body { display: block; padding: 0; }
+        .page {
+            width: 210mm; min-height: 297mm; margin: 0;
+            box-shadow: none;
+        }
+        .block, .report-header, .footer-contact {
+            box-shadow: none !important;
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+        * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            color-adjust: exact !important;
+        }
+    }
+</style>
+</head>
+<body>
+
+<!-- ============================================================ -->
+<!-- PÁGINA 1 - Contexto + Checklist técnico                       -->
+<!-- ============================================================ -->
+<article class="page page-break">
+
+    <!-- HEADER -->
+    <header class="report-header">
+        <div>
+            <h1>REPORTE DE VERIFICACIÓN ONSITE</h1>
+            <p>Visita técnica de campo · Checklist OCPP estructurado</p>
+        </div>
+        <div class="logo">
+            <span class="logo-text">GRIDCODE<small>Transición Energética</small></span>
+        </div>
+    </header>
+
+    <!-- B1 · DATOS DEL TICKET Y DEL CARGADOR -->
+    <section class="block">
+        <div class="block-title"><span class="block-num">1</span>Datos del ticket y del cargador <span class="block-sub">· precompletado desde el sistema</span></div>
+        <div class="grid-4">
+            <div class="field field--prefilled">
+                <label>Ticket ID</label>
+                <input type="text" value="REMOTE-AGG-0002 / FIELD-0011">
+            </div>
+            <div class="field field--prefilled">
+                <label>Fecha de visita</label>
+                <input type="text" value="2026-05-09">
+            </div>
+            <div class="field field--prefilled">
+                <label>Requirente / Cliente</label>
+                <input type="text" value="Colonial">
+            </div>
+            <div class="field field--prefilled">
+                <label>Técnico</label>
+                <input type="text" value="Carlos Ocanto">
+            </div>
+            <div class="field field--prefilled">
+                <label>Servicio</label>
+                <input type="text" value="Verificación onsite por anomalía remota">
+            </div>
+            <div class="field field--prefilled">
+                <label>Cargador (ID)</label>
+                <input type="text" value="CHG-COL-A14">
+            </div>
+            <div class="field field--prefilled">
+                <label>Ubicación</label>
+                <input type="text" value="Estac. Colonial · Nivel -1">
+            </div>
+            <div class="field field--prefilled">
+                <label>Nº plaza / referencia</label>
+                <input type="text" value="Plaza 14">
+            </div>
+            <div class="field field--prefilled">
+                <label>RFID de prueba</label>
+                <input type="text" value="GC-TEST-04">
+            </div>
+            <div class="field field--prefilled">
+                <label>IP del cargador</label>
+                <input type="text" value="10.20.14.14">
+            </div>
+            <div class="field field--prefilled">
+                <label>Modelo / serie</label>
+                <input type="text" value="Wallbox CMR-22 · S/N 8842-1140">
+            </div>
+            <div class="field">
+                <label>Persona en sitio</label>
+                <input type="text" placeholder="Nombre del contacto presente">
+            </div>
+        </div>
+    </section>
+
+    <!-- B2 · RUTA DE GESTIÓN DEL CASO -->
+    <section class="block">
+        <div class="block-title"><span class="block-num">2</span>Ruta de gestión del caso <span class="block-sub">· camino del ticket</span></div>
+        <div class="route">
+            <div class="route-step route-step--done">
+                <div class="route-circle">✓</div>
+                <div class="route-name">Generación de ticket</div>
+                <div class="route-desc">Apertura del caso en el sistema.</div>
+            </div>
+            <div class="route-step route-step--done">
+                <div class="route-circle">✓</div>
+                <div class="route-name">Análisis remoto</div>
+                <div class="route-desc">Diagnóstico OCPP · 7 días.</div>
+            </div>
+            <div class="route-step route-step--done">
+                <div class="route-circle">✓</div>
+                <div class="route-name">Coordinación visita</div>
+                <div class="route-desc">Agenda y acceso al sitio.</div>
+            </div>
+            <div class="route-step route-step--current">
+                <div class="route-circle">4</div>
+                <div class="route-name">Visita onsite</div>
+                <div class="route-desc">Este reporte.</div>
+            </div>
+            <div class="route-step route-step--pending">
+                <div class="route-circle">5</div>
+                <div class="route-name">Análisis post-visita y cierre</div>
+                <div class="route-desc">Acciones posteriores.</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- B3 · MOTIVO DE INTERVENCIÓN -->
+    <section class="block">
+        <div class="block-title"><span class="block-num">3</span>Motivo de intervención <span class="block-sub">· proviene del análisis remoto, no editable en campo</span></div>
+        <div class="motivo">
+            <span class="motivo-label">Síntoma identificado en remoto</span>
+            <div class="motivo-text">
+                <span class="motivo-tag">Anomalía OCPP</span>Cierre de sesión inconsistente con corte temprano de usuario, 3 reinicios y 6 interrupciones de sesión detectados en los últimos 7 días. Salud operativa 63% (banda <b>seguimiento activo</b>). Backend y autorización RFID estables.
+            </div>
+            <div class="motivo-meta">Esta visita complementa el informe remoto REMOTE-AGG-0002 emitido el 2026-05-07.</div>
+        </div>
+    </section>
+
+    <!-- B4 · CHECKLIST TÉCNICO -->
+    <section class="block">
+        <div class="block-title"><span class="block-num">4</span>Checklist técnico <span class="block-sub">· marcar opciones, escribir lo mínimo</span></div>
+        <table class="checklist">
+            <thead>
+                <tr>
+                    <th style="width:38%">Punto de control</th>
+                    <th style="width:13%">Estado</th>
+                    <th style="width:22%">Resultado</th>
+                    <th style="width:9%">Acción</th>
+                    <th>Observación corta</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span class="row-num">1</span><span class="row-name">Energización · pantalla · LEDs</span></td>
+                    <td class="col-status"><select><option>OK</option><option>No OK</option><option>No verificable</option></select></td>
+                    <td><select><option>Pantalla y LEDs OK</option><option>Pantalla intermitente</option><option>Sin energía visible</option></select></td>
+                    <td class="col-action"><select><option>No</option><option>Sí</option></select></td>
+                    <td><input type="text" placeholder="—"></td>
+                </tr>
+                <tr>
+                    <td><span class="row-num">2</span><span class="row-name">Conectividad local · ping · enlace</span></td>
+                    <td class="col-status"><select><option>OK</option><option>No OK</option><option>No verificable</option></select></td>
+                    <td><select><option>Responde</option><option>Intermitente</option><option>No responde</option></select></td>
+                    <td class="col-action"><select><option>No</option><option>Sí</option></select></td>
+                    <td><input type="text" placeholder="—"></td>
+                </tr>
+                <tr>
+                    <td><span class="row-num">3</span><span class="row-name">Estado físico · frente · display · carcasa</span></td>
+                    <td class="col-status"><select><option>OK</option><option>No OK</option><option>No verificable</option></select></td>
+                    <td><select><option>Sin daños</option><option>Daños leves</option><option>Daños relevantes</option></select></td>
+                    <td class="col-action"><select><option>No</option><option>Sí</option></select></td>
+                    <td><input type="text" placeholder="—"></td>
+                </tr>
+                <tr>
+                    <td><span class="row-num">4</span><span class="row-name">Manguera · conector · pistola · detección</span></td>
+                    <td class="col-status"><select><option>OK</option><option>No OK</option><option>No verificable</option></select></td>
+                    <td><select><option>Sin daños</option><option>Cable dañado</option><option>Conector dañado</option><option>Detección irregular</option></select></td>
+                    <td class="col-action"><select><option>No</option><option>Sí</option></select></td>
+                    <td><input type="text" placeholder="—"></td>
+                </tr>
+                <tr>
+                    <td><span class="row-num">5</span><span class="row-name">Bloqueo de seguridad · servo · retención</span></td>
+                    <td class="col-status"><select><option>OK</option><option>No OK</option><option>No verificable</option></select></td>
+                    <td><select><option>Bloquea correctamente</option><option>Bloquea con falla</option><option>No bloquea</option></select></td>
+                    <td class="col-action"><select><option>No</option><option>Sí</option></select></td>
+                    <td><input type="text" placeholder="—"></td>
+                </tr>
+                <tr>
+                    <td><span class="row-num">6</span><span class="row-name">Lectura de tarjeta RFID de prueba</span></td>
+                    <td class="col-status"><select><option>OK</option><option>No OK</option><option>No verificable</option></select></td>
+                    <td><select><option>Lee correctamente</option><option>Lee con demoras</option><option>No lee</option></select></td>
+                    <td class="col-action"><select><option>No</option><option>Sí</option></select></td>
+                    <td><input type="text" placeholder="—"></td>
+                </tr>
+                <tr>
+                    <td><span class="row-num">7</span><span class="row-name">Tipo de autorización utilizada</span></td>
+                    <td class="col-status"><select><option>OK</option><option>No OK</option><option>No verificable</option></select></td>
+                    <td><select><option>Modo libre</option><option>RFID</option><option>App</option><option>Backend</option></select></td>
+                    <td class="col-action"><select><option>No</option><option>Sí</option></select></td>
+                    <td><input type="text" placeholder="—"></td>
+                </tr>
+                <tr>
+                    <td><span class="row-num">8</span><span class="row-name">Prueba de inicio de sesión / carga</span></td>
+                    <td class="col-status"><select><option>OK</option><option>No OK</option><option>No verificable</option></select></td>
+                    <td><select><option>Inicia OK</option><option>Inicia con demora</option><option>No inicia</option></select></td>
+                    <td class="col-action"><select><option>No</option><option>Sí</option></select></td>
+                    <td><input type="text" placeholder="—"></td>
+                </tr>
+                <tr>
+                    <td><span class="row-num">9</span><span class="row-name">Continuidad de sesión (mantener carga)</span></td>
+                    <td class="col-status"><select><option>OK</option><option>No OK</option><option>No verificable</option></select></td>
+                    <td><select><option>Estable</option><option>Interrupciones</option><option>Pierde sesión</option></select></td>
+                    <td class="col-action"><select><option>No</option><option>Sí</option></select></td>
+                    <td><input type="text" placeholder="—"></td>
+                </tr>
+                <tr>
+                    <td><span class="row-num">10</span><span class="row-name">Cierre de sesión · liberación · fin de carga</span></td>
+                    <td class="col-status"><select><option>OK</option><option>No OK</option><option>No verificable</option></select></td>
+                    <td><select><option>Cierra bien</option><option>No cierra</option><option>Inconsistente</option></select></td>
+                    <td class="col-action"><select><option>No</option><option>Sí</option></select></td>
+                    <td><input type="text" placeholder="—"></td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <div class="page-spacer"></div>
+
+    <!-- FOOTER -->
+    <div class="footer-contact">
+        Contacto seguimiento: <a href="mailto:support@grid-code.tech">support@grid-code.tech</a>  |  <a href="https://www.grid-code.tech" target="_blank" rel="noopener">www.grid-code.tech</a>  ·  <span class="page-pill">Hoja 1/2</span>
+    </div>
+</article>
+
+
+<!-- ============================================================ -->
+<!-- PÁGINA 2 - Cierre, evidencia y aprobación                     -->
+<!-- ============================================================ -->
+<article class="page">
+
+    <!-- HEADER (intacto, repetido) -->
+    <header class="report-header">
+        <div>
+            <h1>REPORTE DE VERIFICACIÓN ONSITE</h1>
+            <p>Visita técnica de campo · Checklist OCPP estructurado</p>
+        </div>
+        <div class="logo">
+            <span class="logo-text">GRIDCODE<small>Transición Energética</small></span>
+        </div>
+    </header>
+
+    <!-- B5 · RESULTADO DE LA VISITA -->
+    <section class="block">
+        <div class="block-title"><span class="block-num">5</span>Resultado de la visita y causa probable <span class="block-sub">· una sola acción principal</span></div>
+        <div class="result-grid">
+            <div class="result-cell result-cell--main">
+                <span class="result-label">Resultado principal</span>
+                <select>
+                    <option>Operativo OK</option>
+                    <option>Operativo con observaciones</option>
+                    <option selected>Falla confirmada</option>
+                    <option>Sin visibilidad suficiente</option>
+                    <option>Requiere escalado</option>
+                </select>
+                <span class="result-hint">Estado final del cargador tras la visita.</span>
+            </div>
+            <div class="result-cell">
+                <span class="result-label">Causa probable dominante</span>
+                <select>
+                    <option>Problema local del cargador</option>
+                    <option>Problema de comunicación</option>
+                    <option>Problema de autorización (RFID / backend)</option>
+                    <option selected>Problema mecánico (manguera / servo / bloqueo)</option>
+                    <option>Externalidad del sitio</option>
+                    <option>No concluyente</option>
+                </select>
+                <span class="result-hint">Solo una causa dominante por visita.</span>
+            </div>
+            <div class="result-cell">
+                <span class="result-label">Siguiente paso recomendado</span>
+                <select>
+                    <option>Cerrar ticket</option>
+                    <option>Seguimiento remoto</option>
+                    <option>Escalar a soporte backend</option>
+                    <option selected>Programar intervención correctiva</option>
+                    <option>Requiere repuesto</option>
+                    <option>Requiere nueva visita</option>
+                </select>
+                <span class="result-hint">Acción principal única.</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- B6 · OBSERVACIÓN TÉCNICA -->
+    <section class="block">
+        <div class="block-title"><span class="block-num">6</span>Observación técnica <span class="block-sub">· único campo abierto</span></div>
+        <div class="field">
+            <label>Observaciones particulares del técnico</label>
+            <textarea placeholder="Solo información relevante NO cubierta en el checklist ni en los choices: síntomas extra, condiciones del sitio, riesgos, accesibilidad, etc."></textarea>
+        </div>
+    </section>
+
+    <!-- B7 · EVIDENCIA FOTOGRÁFICA -->
+    <section class="block">
+        <div class="block-title"><span class="block-num">7</span>Evidencia fotográfica <span class="block-sub">· obligatoria · 4 fotos mínimas</span></div>
+        <div class="photos">
+            <div class="photo-slot">
+                <span class="photo-slot-title">Foto 1</span>
+                <span class="photo-slot-desc">Vista general del cargador</span>
+                <div class="photo-frame"></div>
+                <input type="text" class="photo-comment" placeholder="Comentario opcional">
+            </div>
+            <div class="photo-slot">
+                <span class="photo-slot-title">Foto 2</span>
+                <span class="photo-slot-desc">Display · LEDs · error visible</span>
+                <div class="photo-frame"></div>
+                <input type="text" class="photo-comment" placeholder="Comentario opcional">
+            </div>
+            <div class="photo-slot">
+                <span class="photo-slot-title">Foto 3</span>
+                <span class="photo-slot-desc">Conector · manguera · bloqueo</span>
+                <div class="photo-frame"></div>
+                <input type="text" class="photo-comment" placeholder="Comentario opcional">
+            </div>
+            <div class="photo-slot">
+                <span class="photo-slot-title">Foto 4</span>
+                <span class="photo-slot-desc">Evidencia adicional · cuadro · entorno</span>
+                <div class="photo-frame"></div>
+                <input type="text" class="photo-comment" placeholder="Comentario opcional">
+            </div>
+        </div>
+        <div class="photos-hint">⚠ Adjuntar las fotos al ticket antes del cierre. La evidencia es requisito de auditoría.</div>
+    </section>
+
+    <!-- B8 · APROBACIÓN ONSITE -->
+    <section class="block">
+        <div class="block-title"><span class="block-num">8</span>Aprobación onsite <span class="block-sub">· persona del sitio que autoriza la intervención</span></div>
+        <div class="approval">
+            <div class="field">
+                <label>Persona que autoriza</label>
+                <input type="text" placeholder="Nombre y apellido">
+            </div>
+            <div class="field">
+                <label>Cargo / relación con el sitio</label>
+                <select>
+                    <option value="">Seleccionar...</option>
+                    <option>Encargado de operaciones</option>
+                    <option>Facility manager</option>
+                    <option>Seguridad</option>
+                    <option>Mantenimiento</option>
+                    <option>Recepción / portería</option>
+                    <option>Operador del cargador</option>
+                    <option>Otro</option>
+                </select>
+            </div>
+            <div class="field">
+                <label>Firma / validación</label>
+                <div class="signature-box">Firma o registro de autorización</div>
+            </div>
+        </div>
+    </section>
+
+    <div class="page-spacer"></div>
+
+    <!-- FOOTER (intacto, repetido) -->
+    <div class="footer-contact">
+        Contacto seguimiento: <a href="mailto:support@grid-code.tech">support@grid-code.tech</a>  |  <a href="https://www.grid-code.tech" target="_blank" rel="noopener">www.grid-code.tech</a>  ·  <span class="page-pill">Hoja 2/2</span>
+    </div>
+</article>
+
+<script>
+    // Colorización automática de selects de "Estado" en el checklist
+    document.querySelectorAll('.checklist .col-status select').forEach(sel => {
+        const apply = () => {
+            sel.classList.remove('status-ok', 'status-warn', 'status-bad');
+            const v = sel.value.trim();
+            if (v === 'OK') sel.classList.add('status-ok');
+            else if (v === 'No OK') sel.classList.add('status-bad');
+            else if (v === 'No verificable') sel.classList.add('status-warn');
+        };
+        sel.addEventListener('change', apply);
+        apply();
+    });
+</script>
+</body>
+</html>
+
