@@ -5,14 +5,37 @@ from protocols.email.validate.email_validate_v1 import run as run_validate
 
 
 def test_read_normalizes_count():
-    out = run_read({"emails":[{"id":1,"from":"x","subject":"s","body":"b","timestamp":"t"}]})
+    out = run_read({"emails":[{"id":1,"from":"x","from_name":"X","to":["laia@grid-code.tech"],"cc":["dario@grid-code.tech"],"subject":"s","body":"b","timestamp":"t","is_forward":True}]})
     assert out["count"] == 1
     assert out["emails"][0]["id"] == "1"
+    assert out["emails"][0]["to"] == ["laia@grid-code.tech"]
+    assert out["emails"][0]["is_forward"] is True
 
 
-def test_interpret_ticket():
-    out = run_interpret({"subject":"GC-EV-20260506-0001","body":"No carga"})
+def test_interpret_ticket_direct_to_laia_is_p1_and_reply_required():
+    out = run_interpret({
+        "subject": "GC-EV-20260506-0001",
+        "body": "No carga",
+        "to": ["laia@grid-code.tech"],
+        "cc": ["dario@grid-code.tech"],
+    })
     assert out["category"] == "ticket"
+    assert out["priority"] == "p1"
+    assert out["requires_reply"] is True
+    assert out["action"] == "reply_required"
+
+
+def test_interpret_laia_in_cc_is_p2_watch_notify():
+    out = run_interpret({
+        "subject": "Consulta comercial",
+        "body": "Presupuesto para nuevo punto",
+        "to": ["operaciones@grid-code.tech"],
+        "cc": ["laia@grid-code.tech", "dario@grid-code.tech"],
+    })
+    assert out["category"] == "ticket"
+    assert out["priority"] == "p2"
+    assert out["requires_reply"] is False
+    assert out["action"] == "notify_dario_watch"
 
 
 def test_write_and_validate_ok():

@@ -9,10 +9,14 @@ def run(inputs: Dict[str, Any]) -> Dict[str, Any]:
         normalized.append({
             "id": str(e.get("id", "")),
             "from": e.get("from", ""),
+            "from_name": e.get("from_name", ""),
+            "to": e.get("to", []),
+            "cc": e.get("cc", []),
             "subject": e.get("subject", ""),
             "body": e.get("body", ""),
             "timestamp": e.get("timestamp", ""),
             "is_read": bool(e.get("is_read", False)),
-            "thread_id": e.get("thread_id", "")
+            "thread_id": e.get("thread_id", ""),
+            "is_forward": bool(e.get("is_forward", False))
         })
     return {"protocol_id": PROTOCOL_ID, "emails": normalized, "count": len(normalized)}

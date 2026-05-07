@@ -4,20 +4,57 @@
     "protocol_id",
     "category",
     "priority",
-    "requires_reply"
+    "requires_reply",
+    "action",
+    "laia_in_to",
+    "laia_in_cc",
+    "is_forward",
+    "technical_urgency",
+    "topic",
+    "p2_notification",
+    "p1_assist_message"
   ],
   "properties": {
     "protocol_id": {
       "type": "string"
     },
     "category": {
-      "type": "string"
+      "type": "string",
+      "enum": ["ticket"]
     },
     "priority": {
-      "type": "string"
+      "type": "string",
+      "enum": ["p1", "p2"]
     },
     "requires_reply": {
       "type": "boolean"
+    },
+    "action": {
+      "type": "string",
+      "enum": ["reply_required", "notify_dario_watch", "watch", "watch_forward"]
+    },
+    "laia_in_to": {
+      "type": "boolean"
+    },
+    "laia_in_cc": {
+      "type": "boolean"
+    },
+    "is_forward": {
+      "type": "boolean"
+    },
+    "technical_urgency": {
+      "type": "boolean"
+    },
+    "topic": {
+      "type": "string"
+    },
+    "p2_notification": {
+      "type": "string",
+      "description": "Aviso corto de 1 línea para Dario cuando el correo queda en prioridad 2"
+    },
+    "p1_assist_message": {
+      "type": "string",
+      "description": "Mensaje de coordinación para P1 pidiendo enfoque de respuesta a Dario"
     }
   }
 }
