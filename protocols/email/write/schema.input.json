@@ -1,0 +1,17 @@
+{
+  "type": "object",
+  "required": [
+    "context"
+  ],
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "context": {
+      "type": "string"
+    },
+    "next_step": {
+      "type": "string"
+    }
+  }
+}

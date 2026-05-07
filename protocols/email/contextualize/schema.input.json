@@ -1,0 +1,56 @@
+{
+  "type": "object",
+  "required": [
+    "email"
+  ],
+  "properties": {
+    "email": {
+      "type": "object",
+      "required": [
+        "from",
+        "subject"
+      ],
+      "properties": {
+        "from": {
+          "type": "string"
+        },
+        "subject": {
+          "type": "string"
+        },
+        "body": {
+          "type": "string"
+        },
+        "thread_id": {
+          "type": "string"
+        },
+        "cc": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "status": {
+          "type": "string"
+        }
+      }
+    },
+    "contact_history": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "known_contacts": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "gridcode_domains": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

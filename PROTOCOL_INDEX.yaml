@@ -1,0 +1,141 @@
+version: 2
+project: gridcode-protocol-hub
+index_strategy: by_channel
+
+channels:
+  email:
+    description: "Procesos para correo electrónico (entrada, análisis, decisión y salida)."
+    protocols:
+      - protocol_id: email_read_v1
+        channel: email
+        stage: read
+        version: v1
+        tags: [email, read, threads, context]
+        input_schema_path: protocols/email/read/schema.input.json
+        output_schema_path: protocols/email/read/schema.output.json
+        status: draft
+        summary: Lee correos y normaliza campos para análisis.
+
+      - protocol_id: email_interpret_v1
+        channel: email
+        stage: interpret
+        version: v1
+        tags: [email, interpret, classify, ticket]
+        input_schema_path: protocols/email/interpret/schema.input.json
+        output_schema_path: protocols/email/interpret/schema.output.json
+        status: draft
+        summary: Clasifica intención y prioridad operativa.
+
+      - protocol_id: email_contact_context_v1
+        channel: email
+        stage: contextualize
+        version: v1
+        tags: [email, contexto, remitente, historial, tono, google-contacts, pending, gridcode]
+        input_schema_path: protocols/email/contextualize/schema.input.json
+        output_schema_path: protocols/email/contextualize/schema.output.json
+        status: draft
+        summary: Contextualiza contacto por remitente e historial aunque cambie el asunto.
+
+      - protocol_id: email_contact_update_v1
+        channel: email
+        stage: contact_update
+        version: v1
+        tags: [email, contacts, google-contacts, context, update, pending, relationship]
+        input_schema_path: protocols/email/contact_update/schema.input.json
+        output_schema_path: protocols/email/contact_update/schema.output.json
+        status: draft
+        summary: Define acción y payload para actualizar contexto de contacto en Google Contacts.
+
+      - protocol_id: email_write_v1
+        channel: email
+        stage: write
+        version: v1
+        tags: [email, write, style, reply]
+        input_schema_path: protocols/email/write/schema.input.json
+        output_schema_path: protocols/email/write/schema.output.json
+        status: draft
+        summary: Redacta respuesta en formato humano estándar.
+
+      - protocol_id: email_validate_v1
+        channel: email
+        stage: validate
+        version: v1
+        tags: [email, validate, guardrails]
+        input_schema_path: protocols/email/validate/schema.input.json
+        output_schema_path: protocols/email/validate/schema.output.json
+        status: draft
+        summary: Valida cumplimiento de tono, formato y bloqueos.
+
+      - protocol_id: email_response_orchestrator_v1
+        channel: email
+        stage: orchestrate_response
+        version: v1
+        tags: [email, response, commitments, proactive, tasks]
+        input_schema_path: shared/orchestration/email_response_orchestrator_v1.py#payload
+        output_schema_path: shared/orchestration/email_response_orchestrator_v1.py#return
+        status: draft
+        summary: Orquesta respuesta con validación de estilo, compromisos y tareas proactivas.
+
+      - protocol_id: email_delivery_policy_v1
+        channel: email
+        stage: delivery
+        version: v1
+        tags: [email, delivery, timing, errata, reply-all, cc]
+        input_schema_path: shared/orchestration/email_delivery_policy_v1.py#inputs
+        output_schema_path: shared/orchestration/email_delivery_policy_v1.py#decision
+        status: draft
+        summary: Define envío inmediato o posdatado, reglas de destinatarios y protocolo de erratas.
+
+      - protocol_id: email_attachments_router_v1
+        channel: email
+        stage: attachments
+        version: v1
+        tags: [email, attachments, drive, routing]
+        input_schema_path: shared/orchestration/email_attachments_router_v1.py#email_record
+        output_schema_path: shared/orchestration/email_attachments_router_v1.py#resolution_plan
+        status: draft
+        summary: Resuelve fuentes de adjuntos (Gmail/Drive) y plan de custodia.
+
+      - protocol_id: email_learning_rail_v1
+        channel: email
+        stage: learning
+        version: v1
+        tags: [email, learning, outcomes, pending, sla]
+        input_schema_path: shared/learning/email_learning_rail_v1.py#payload
+        output_schema_path: shared/learning/email_learning_rail_v1.py#record
+        status: draft
+        summary: Registra aprendizaje operativo y outcomes normalizados del flujo email.
+
+      - protocol_id: email_webhook_trigger_v1
+        channel: email
+        stage: trigger
+        version: v1
+        tags: [email, webhook, trigger, dedupe, hmac]
+        input_schema_path: shared/orchestration/email_webhook_trigger_v1.py#raw_event
+        output_schema_path: shared/orchestration/email_webhook_trigger_v1.py#inbound_update_event
+        status: draft
+        summary: Valida y deduplica eventos webhook para disparar el rail de gestión de email.
+
+  linkedin:
+    description: "Reservado para procesos de comentarios, mensajes y publicaciones en LinkedIn."
+    protocols: []
+
+  chat:
+    description: "Reservado para procesos de chat operativo y atención conversacional."
+    protocols: []
+
+  whatsapp:
+    description: "Reservado para procesos de WhatsApp Business."
+    protocols: []
+
+  instagram:
+    description: "Reservado para procesos de Instagram (DM/comentarios)."
+    protocols: []
+
+naming_convention:
+  protocol_id: "<canal>_<etapa>_v<version>"
+  schema_paths: "protocols/<canal>/<etapa>/schema.(input|output).json"
+
+notes:
+  - "Cada canal mantiene sus propias reglas de tono, contexto y foco operacional."
+  - "No mezclar criterios entre canales sin protocolo explícito."

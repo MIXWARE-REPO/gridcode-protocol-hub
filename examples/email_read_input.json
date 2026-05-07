@@ -1,0 +1,13 @@
+{
+  "emails": [
+    {
+      "id": "1",
+      "from": "a@x.com",
+      "subject": "Consulta",
+      "body": "Hola",
+      "timestamp": "2026-05-06T10:00:00Z",
+      "is_read": false,
+      "thread_id": "t1"
+    }
+  ]
+}

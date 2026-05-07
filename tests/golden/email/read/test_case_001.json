@@ -1,0 +1,18 @@
+{
+  "input": {
+    "emails": [
+      {
+        "id": "7",
+        "from": "ops@grid-code.tech",
+        "subject": "Incidencia",
+        "body": "No carga",
+        "timestamp": "2026-05-06T09:00:00Z",
+        "is_read": true,
+        "thread_id": "thr-7"
+      }
+    ]
+  },
+  "expected": {
+    "count": 1
+  }
+}

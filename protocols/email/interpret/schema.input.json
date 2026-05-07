@@ -1,0 +1,35 @@
+{
+  "type": "object",
+  "required": [
+    "subject",
+    "body"
+  ],
+  "properties": {
+    "subject": {
+      "type": "string"
+    },
+    "body": {
+      "type": "string"
+    },
+    "to": {
+      "oneOf": [
+        {"type": "array", "items": {"type": "string"}},
+        {"type": "string"}
+      ]
+    },
+    "cc": {
+      "oneOf": [
+        {"type": "array", "items": {"type": "string"}},
+        {"type": "string"}
+      ]
+    },
+    "laia_email": {
+      "type": "string",
+      "default": "laia@grid-code.tech"
+    },
+    "is_forward": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}

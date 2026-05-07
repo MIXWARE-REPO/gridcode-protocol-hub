@@ -1,0 +1,60 @@
+{
+  "type": "object",
+  "required": [
+    "protocol_id",
+    "sender",
+    "first_mail_in_thread",
+    "known_sender",
+    "relation_detected",
+    "has_gridcode_participant",
+    "context_level",
+    "tone_hint",
+    "last_3_topics",
+    "contact_update_suggested",
+    "pending_only_candidate"
+  ],
+  "properties": {
+    "protocol_id": {
+      "type": "string"
+    },
+    "sender": {
+      "type": "string"
+    },
+    "sender_domain": {
+      "type": "string"
+    },
+    "subject": {
+      "type": "string"
+    },
+    "first_mail_in_thread": {
+      "type": "boolean"
+    },
+    "known_sender": {
+      "type": "boolean"
+    },
+    "relation_detected": {
+      "type": "boolean"
+    },
+    "has_gridcode_participant": {
+      "type": "boolean"
+    },
+    "context_level": {
+      "type": "string"
+    },
+    "tone_hint": {
+      "type": "string"
+    },
+    "last_3_topics": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "contact_update_suggested": {
+      "type": "boolean"
+    },
+    "pending_only_candidate": {
+      "type": "boolean"
+    }
+  }
+}
