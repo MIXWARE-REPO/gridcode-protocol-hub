@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 from typing import Any, Dict, Iterable, List
-import re
 
 from shared.orchestration.email_delivery_policy_v1 import (
     build_recipients,
@@ -28,13 +27,14 @@ REPORT_KEYWORDS = {"informe", "reporte", "report", "resumen", "analisis", "anál
 CERTIFICATE_KEYWORDS = {"certificado", "certificate", "constancia", "emisión", "emision"}
 CONTACT_KEYWORDS = {"contacto", "firma", "tarjeta", "linkedin", "teléfono", "telefono", "email signature"}
 REPLY_KEYWORDS = {"responde", "responder", "contesta", "contestar", "reply"}
-ORDER_KEYWORDS = {"haz", "hacer", "ejecuta", "ejecutar", "agenda", "prepara", "revisa", "envía", "enviar", "manda", "mandar", "actualiza", "actualizar", "cambia", "cambiar"}
+ORDER_KEYWORDS = {"haz", "hacer", "ejecuta", "ejecutar", "agenda", "prepara", "revisa", "envía", "enviar", "manda", "mandar", "actualiza", "actualizar", "cambia", "cambiar", "compartid", "compartir"}
 INFO_KEYWORDS = {"qué", "que", "estado", "status", "confirma", "confirmar", "dime", "decime", "consulta"}
 APPROVAL_KEYWORDS = {"apruebas", "aprobar", "confirmas", "confirmar", "ok", "vale", "mandalo", "mándalo", "autorizas", "autorizar"}
 COMMITMENT_KEYWORDS = {"mañana", "manana", "semana próxima", "semana proxima", "deadline", "plazo", "entrega", "compromiso"}
 CRITICAL_KEYWORDS = {"borrar", "eliminar", "permiso", "credentials", "credenciales", "pagar", "pago", "legal", "contrato", "financiero"}
 ADMIN_KEYWORDS = {"factura", "iva", "contable", "administrativo", "gasto", "proveedor", "pago"}
 SUPPORT_KEYWORDS = {"soporte", "error", "fallo", "incidencia", "problema", "caido", "caído"}
+SENSITIVE_ACTION_KEYWORDS = {"factura", "documento", "drive", "compartir", "share", "certificado", "contrato", "legal", "pago", "pagar", "permiso", "credenciales"}
 
 TARGET_BY_TOPIC = {
     "MEETING": "calendar-meet-host-gridcode",
@@ -155,25 +155,29 @@ def assess_risk(intent: str, topic: str, thread_type: str, text: str) -> str:
     return "LOW"
 
 
-def determine_action(intent: str, thread_type: str, is_authorized: bool, risk: str) -> str:
+def determine_action(intent: str, topic: str, thread_type: str, is_authorized: bool, risk: str, text: str) -> str:
     if intent == "SPAM_NOISE":
         return "SILENT"
-    if intent == "UNKNOWN":
-        return "ESCALATE" if not is_authorized else "DRAFT"
     if risk == "CRITICAL":
         return "REJECT"
+
+    sensitive = _contains_any(text, SENSITIVE_ACTION_KEYWORDS)
+    external_context = thread_type != "INTERNAL_ONLY" or not is_authorized
+
+    if external_context:
+        if intent in {"REQUEST_INFO", "FYI"} and not sensitive and risk in {"LOW", "MEDIUM"}:
+            return "DRAFT"
+        return "REQUIRE_APPROVAL"
+
+    # Internal-only, authorized context.
     if intent == "APPROVAL":
         return "REQUIRE_APPROVAL"
-    if thread_type == "INTERNAL_ONLY" and is_authorized:
+    if intent in {"ORDER", "COMMITMENT"}:
         return "EXECUTE" if risk in {"LOW", "MEDIUM"} else "DRAFT"
-    if thread_type == "HYBRID_THREAD":
-        return "REQUIRE_APPROVAL" if risk in {"HIGH", "CRITICAL"} else "DRAFT"
-    if thread_type == "EXTERNAL_ONLY":
-        if intent in {"REQUEST_INFO", "FYI"} and risk in {"LOW", "MEDIUM"}:
-            return "DRAFT"
-        return "REQUIRE_APPROVAL" if risk in {"HIGH", "CRITICAL"} else "ESCALATE"
-    if is_authorized and intent in {"ORDER", "REQUEST_INFO", "FYI", "COMMITMENT"}:
-        return "EXECUTE" if risk in {"LOW", "MEDIUM"} else "REQUIRE_APPROVAL"
+    if topic in {"MEETING", "REPORT", "REPLY", "CONTACT"}:
+        return "EXECUTE" if risk in {"LOW", "MEDIUM"} else "DRAFT"
+    if intent in {"REQUEST_INFO", "FYI"}:
+        return "EXECUTE"
     return "DRAFT"
 
 
@@ -206,7 +210,7 @@ def evaluate_mail_route(payload: Dict[str, Any]) -> Dict[str, Any]:
     target_skill = resolve_target_skill(topic, intent)
     actor_role = classify_role(payload.get("actor_role"), actor_domain)
     allow_senders = {x.lower() for x in _listify(payload.get("authorized_senders"))}
-    is_authorized = actor_domain in INTERNAL_DOMAINS or from_email.lower() in allow_senders
+    is_authorized = actor_domain in INTERNAL_DOMAINS
     laia_email = _clean(payload.get("laia_email") or LAIA_EMAIL).lower()
     priority = classify_priority(to_list, cc_list, laia_email=laia_email) or "P3"
     risk = assess_risk(intent, topic, thread_type, text)
@@ -232,28 +236,28 @@ def evaluate_mail_route(payload: Dict[str, Any]) -> Dict[str, Any]:
             now_dt = datetime.now(timezone.utc)
     else:
         now_dt = datetime.now(timezone.utc)
-    delivery = decide_delivery_time(now_dt, allow_out_of_hours=(thread_type == "INTERNAL_ONLY" and risk in {"LOW", "MEDIUM"}))
+    delivery = decide_delivery_time(now_dt, allow_out_of_hours=False)
 
-    action = determine_action(intent, thread_type, is_authorized, risk)
+    action = determine_action(intent, topic, thread_type, is_authorized, risk, text)
     requires_approval = action == "REQUIRE_APPROVAL"
-    if intent == "SPAM_NOISE":
-        requires_approval = False
     delay_mode = (
         "NO_DELAY" if action == "SILENT" else
         "BLOCKED" if action == "REJECT" else
         "APPROVAL_DELAY" if requires_approval else
+        "SHORT_DELAY" if action == "DRAFT" else
         "NO_DELAY" if delivery.send_now else
         "SHORT_DELAY"
     )
 
-    if action in {"DRAFT", "EXECUTE"} and thread_type == "EXTERNAL_ONLY" and not is_authorized:
-        action = "DRAFT" if risk != "CRITICAL" else "ESCALATE"
-        requires_approval = False
-        delay_mode = "SHORT_DELAY" if action == "DRAFT" else "BLOCKED"
+    # Never auto-send unless it's a direct internal execution.
+    send_now = bool(action == "EXECUTE" and is_authorized and thread_type == "INTERNAL_ONLY" and delivery.send_now)
+    scheduled_for = delivery.scheduled_for if action == "EXECUTE" and not delivery.send_now and is_authorized else None
 
     rules_triggered: List[str] = []
     if actor_domain in INTERNAL_DOMAINS:
         rules_triggered.append("domain_allowlist")
+    if allow_senders:
+        rules_triggered.append("external_sender_hint_ignored_for_auth")
     if priority == "P1":
         rules_triggered.append("priority_p1")
     elif priority == "P2":
@@ -267,7 +271,7 @@ def evaluate_mail_route(payload: Dict[str, Any]) -> Dict[str, Any]:
     if risk == "CRITICAL":
         rules_triggered.append("critical_block")
 
-    reply_all = thread_type in {"INTERNAL_ONLY", "HYBRID_THREAD"} and action != "SILENT"
+    reply_all = thread_type == "INTERNAL_ONLY" and action == "EXECUTE"
     recipients = build_recipients(base_to=[from_email] if from_email else [], base_cc=cc_list, category=category)
     reply_subject = normalize_subject_for_reply(subject)
 
@@ -299,9 +303,9 @@ def evaluate_mail_route(payload: Dict[str, Any]) -> Dict[str, Any]:
             "reply_subject": reply_subject,
         },
         "delivery": {
-            "send_now": bool(delivery.send_now),
-            "scheduled_for": delivery.scheduled_for,
-            "mode": "immediate" if delivery.send_now else "retained",
+            "send_now": send_now,
+            "scheduled_for": scheduled_for,
+            "mode": "immediate" if send_now else "retained",
             "is_out_of_hours": bool(delivery.is_out_of_hours),
             "suggestion_message": delivery.suggestion_message,
             "category": category,
@@ -326,6 +330,7 @@ def evaluate_mail_route(payload: Dict[str, Any]) -> Dict[str, Any]:
                 "docs/email-delivery-and-errata-policy.md",
             ],
             "rules_triggered": rules_triggered,
+            "allow_senders_seen": allow_senders,
             "confidence": round(confidence, 2),
             "timestamp": datetime.now(timezone.utc).replace(microsecond=0).isoformat(),
         },

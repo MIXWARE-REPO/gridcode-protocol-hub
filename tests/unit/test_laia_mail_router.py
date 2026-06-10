@@ -54,8 +54,45 @@ def test_hybrid_drive_share_drafts_and_blocks_reply_all():
     assert out["classification"]["thread_type"] == "HYBRID_THREAD"
     assert out["routing"]["target_skill"] == "gridcode-drive-api-first-governance"
     assert out["decision"]["action"] in {"DRAFT", "REQUIRE_APPROVAL"}
-    assert out["reply_policy"]["reply_all"] is True
+    assert out["reply_policy"]["reply_all"] is False
     assert out["delivery"]["send_now"] in {True, False}
+
+
+def test_external_order_requires_approval_and_never_sends_now():
+    out = run({
+        "channel": "email",
+        "from": "proveedor@externo.com",
+        "to": ["laia@grid-code.tech"],
+        "cc": [],
+        "subject": "Enviar factura y compartir documento",
+        "body": "Por favor enviad la factura y compartid el documento hoy.",
+        "actor_role": "EXTERNAL",
+        "authorized_senders": ["proveedor@externo.com"],
+        "now": "2026-06-10T11:00:00+00:00",
+    })
+    assert out["actor"]["is_authorized"] is False
+    assert out["classification"]["thread_type"] == "HYBRID_THREAD"
+    assert out["decision"]["action"] == "REQUIRE_APPROVAL"
+    assert out["decision"]["delay_mode"] == "APPROVAL_DELAY"
+    assert out["delivery"]["send_now"] is False
+    assert out["reply_policy"]["reply_all"] is False
+
+
+def test_hybrid_thread_disables_reply_all_even_for_internal_sender():
+    out = run({
+        "channel": "email",
+        "from": "jorge@grid-code.tech",
+        "to": ["cliente@externo.com"],
+        "cc": ["laia@grid-code.tech", "dario@grid-code.tech"],
+        "subject": "Compartir Drive del proyecto",
+        "body": "Por favor compartid el documento con el cliente y revisad el acceso.",
+        "actor_role": "OPERATIONS",
+        "now": "2026-06-10T11:00:00+00:00",
+    })
+    assert out["classification"]["thread_type"] == "HYBRID_THREAD"
+    assert out["routing"]["target_skill"] == "gridcode-drive-api-first-governance"
+    assert out["reply_policy"]["reply_all"] is False
+    assert out["decision"]["action"] in {"DRAFT", "REQUIRE_APPROVAL"}
 
 
 def test_noise_silences():
