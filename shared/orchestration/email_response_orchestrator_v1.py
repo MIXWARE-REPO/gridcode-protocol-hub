@@ -5,7 +5,6 @@ from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, List
 
 from shared.orchestration.internal_capability_catalog_v1 import (
-    build_internal_capabilities_block,
     build_internal_capabilities_compact_block,
     is_internal_team_email,
     select_internal_capability,

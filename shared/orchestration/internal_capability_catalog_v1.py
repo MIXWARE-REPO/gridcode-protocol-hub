@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from html import escape
 from typing import Any, Dict, List, Sequence
 from urllib.parse import quote
 
@@ -196,7 +195,7 @@ def build_internal_capabilities_compact_block(name: str = "Lore", to_email: str 
         "items": items,
         "selected": selected,
         "text": "\n".join(lines),
-        "html": "<div>" + "<br/>".join(escape(line) for line in lines) + "</div>",
+        "html": None,
     }
 
 
