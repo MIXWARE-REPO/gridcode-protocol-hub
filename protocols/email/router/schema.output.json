@@ -1,0 +1,16 @@
+{
+  "type": "object",
+  "required": ["protocol_id", "router", "classification", "decision"],
+  "properties": {
+    "protocol_id": {"type": "string"},
+    "router": {"type": "string"},
+    "input_channel": {"type": "string"},
+    "actor": {"type": "object"},
+    "classification": {"type": "object"},
+    "routing": {"type": "object"},
+    "delivery": {"type": "object"},
+    "reply_policy": {"type": "object"},
+    "decision": {"type": "object"},
+    "audit": {"type": "object"}
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "type": "object",
+  "required": ["from", "to", "subject", "body"],
+  "properties": {
+    "channel": {"type": "string"},
+    "account": {"type": "string"},
+    "message_id": {"type": "string"},
+    "thread_id": {"type": "string"},
+    "from": {"type": "string"},
+    "to": {"type": "array"},
+    "cc": {"type": "array"},
+    "subject": {"type": "string"},
+    "body": {"type": "string"},
+    "actor_role": {"type": "string"},
+    "authorized_senders": {"type": "array"},
+    "laia_email": {"type": "string"},
+    "now": {"type": "string"}
+  }
+}
