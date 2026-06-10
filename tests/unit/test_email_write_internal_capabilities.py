@@ -6,13 +6,11 @@ def test_write_auto_appends_internal_capability_triggers_for_internal_mail():
     out = run({"name": "Lore", "context": "grid-code", "recipient_email": "lore@grid-code.tech"})
     body = out["body"]
     assert "Podes contar conmigo para" in body
-    assert "> 1) Meet - mailto:laia@grid-code.tech" in body
-    assert "> 7) OCPP - mailto:laia@grid-code.tech" in body
-    assert "subject=" in body
-    assert "body=" in body
+    assert "> 1) Hacer una meet" in body
+    assert "> 7) Hacer certificados de validacion OCPP" in body
     assert out["internal_capabilities"]["mode"] == "compact"
     assert out["body_html"] is not None
-    assert "<a href=" in out["body_html"]
+    assert "Podes contar conmigo para" in out["body_html"]
 
 
 def test_write_can_force_and_select_trigger():

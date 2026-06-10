@@ -173,38 +173,19 @@ def build_internal_capabilities_block(name: str = "Lore", to_email: str = INTERN
 def build_internal_capabilities_compact_block(name: str = "Lore", to_email: str = INTERNAL_MAIL_TO, selected_trigger: str | None = None) -> Dict[str, Any]:
     items = [cap.to_dict(index=i + 1, to_email=to_email) for i, cap in enumerate(VERIFIED_INTERNAL_CAPABILITIES)]
     compact_map = [
-        (1, "Meet", items[0]),
-        (2, "Calendario", items[1]),
-        (3, "Drive", items[2]),
-        (4, "Informes", items[3]),
-        (5, "On-site", items[4]),
-        (6, "Logs remotos", items[5]),
-        (7, "OCPP", items[6]),
+        (1, "Hacer una meet"),
+        (2, "Consignar una tarea o evento en calendario"),
+        (3, "Buscar algun archivo en Drive"),
+        (4, "Hacer informes o reportes comerciales tecnicos o administrativos"),
+        (5, "Hacer reportes para cargadores que se han de visitar on-site"),
+        (6, "Hacer informes remotos sobre los logs de eventos de los cargadores"),
+        (7, "Hacer certificados de validacion OCPP"),
     ]
     lines = ["Podes contar conmigo para:"]
-    for index, label, item in compact_map:
-        lines.append(f"> {index}) {label} - {item['mailto_url']}")
+    for index, label in compact_map:
+        lines.append(f"> {index}) {label}")
 
     selected = _selected_item(items, selected_trigger)
-
-    html_lines = [
-        '<div style="font-family:Arial,sans-serif; line-height:1.55; color:#222;">',
-        '<p style="margin:0 0 12px 0; font-weight:600;">Podes contar conmigo para:</p>',
-        '<table role="presentation" cellpadding="0" cellspacing="0" style="border-collapse:collapse; width:100%;">',
-    ]
-    for item in items:
-        label = escape(item["label"])
-        href = escape(item["mailto_url"], quote=True)
-        html_lines.append(
-            '<tr>'
-            f'<td style="padding:4px 0; vertical-align:top; white-space:nowrap;">&gt;</td>'
-            f'<td style="padding:4px 0;">'
-            f'<a href="{href}" style="color:#0b57d0; text-decoration:none;">{item["index"]}) {label}</a>'
-            '</td>'
-            '</tr>'
-        )
-    html_lines.append('</table>')
-    html_lines.append('</div>')
 
     return {
         "enabled": True,
@@ -215,7 +196,7 @@ def build_internal_capabilities_compact_block(name: str = "Lore", to_email: str 
         "items": items,
         "selected": selected,
         "text": "\n".join(lines),
-        "html": "".join(html_lines),
+        "html": "<div>" + "<br/>".join(escape(line) for line in lines) + "</div>",
     }
 
 

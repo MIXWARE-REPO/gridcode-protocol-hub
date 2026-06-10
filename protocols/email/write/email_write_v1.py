@@ -66,7 +66,6 @@ def run(inputs: Dict[str, Any]) -> Dict[str, Any]:
         body_html = (
             '<html><body style="font-family:Arial,sans-serif; white-space:normal; line-height:1.5;">'
             f'<div style="white-space:pre-wrap;">{body.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")}</div>'
-            f'{block.get("html", "")}'
             '</body></html>'
         )
 
