@@ -116,6 +116,16 @@ channels:
         status: draft
         summary: Valida y deduplica eventos webhook para disparar el rail de gestión de email.
 
+      - protocol_id: email_router_v1
+        channel: email
+        stage: router
+        version: v1
+        tags: [email, router, triage, policy, delay, approval]
+        input_schema_path: protocols/email/router/schema.input.json
+        output_schema_path: protocols/email/router/schema.output.json
+        status: draft
+        summary: Router ejecutivo que centraliza skills de correo, aplica policy y enruta a subskills.
+
   linkedin:
     description: "Reservado para procesos de comentarios, mensajes y publicaciones en LinkedIn."
     protocols: []
