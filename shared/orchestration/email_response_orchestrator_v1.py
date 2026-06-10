@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-import re
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, List
 
+from shared.orchestration.internal_capability_catalog_v1 import build_internal_capabilities_block, is_internal_team_email
 
 STYLE_SKILL = "email-style-grid-code"
 
@@ -148,6 +148,7 @@ def orchestrate_email_response(payload: Dict[str, Any]) -> Dict[str, Any]:
     - detección de compromisos
     - tareas sugeridas para agenda/seguimiento
     - validación de estilo base
+    - catálogo de capacidades internas verificadas por trigger
     """
     instruction = payload.get("instruction", "")
     topic = payload.get("topic", "tema en seguimiento")
@@ -155,7 +156,7 @@ def orchestrate_email_response(payload: Dict[str, Any]) -> Dict[str, Any]:
     to_email = payload.get("to_email", "")
     subject = payload.get("subject", "")
     final_body = payload.get("final_body", "")
-    preferred_slot = payload.get("preferred_slot", "manana")  # manana|tarde
+    preferred_slot = payload.get("preferred_slot", "manana")
     assignee_email = payload.get("assignee_email", "dario@grid-code.tech")
 
     commitments = detect_commitments(instruction, final_body, preferred_slot=preferred_slot)
@@ -163,10 +164,15 @@ def orchestrate_email_response(payload: Dict[str, Any]) -> Dict[str, Any]:
     style = apply_style_guardrails(final_body)
     confirm = build_confirmation_block(to_email, subject, final_body, commitments, tasks)
 
+    internal_capabilities = None
+    if is_internal_team_email(to_email):
+        internal_capabilities = build_internal_capabilities_block(name=contact_name, to_email="laia@grid-code.tech")
+
     return {
         "protocol": "email_response_orchestrator_v1",
         "style_validation": style,
         "confirmation": confirm,
+        "internal_capabilities": internal_capabilities or {"enabled": False, "items": [], "count": 0, "text": ""},
         "task_creation": {
             "provider": "google_tasks",
             "needs_user_slot_confirmation": len(commitments) > 0,

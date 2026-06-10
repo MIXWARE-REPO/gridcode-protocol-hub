@@ -17,6 +17,19 @@ Centralizar la decisión sobre el correo entrante para evitar duplicidad entre s
 - evalúa riesgo
 - decide silencio, draft, ejecución o aprobación
 - enruta a subskills o protocolos concretos
+- expone un catálogo verificado de capacidades internas con triggers por mailto para reutilización inmediata
+
+## Catálogo interno verificado
+Cuando el destinatario es equipo interno, la respuesta puede incluir un bloque de capacidades con enlaces tipo `mailto:`. Cada línea arranca con `>` para que el equipo la vea como opción accionable.
+
+Capacidades verificadas:
+1. Hacer una meet
+2. Consignar una tarea o evento en calendario
+3. Buscar algun archivo en Drive
+4. Hacer informes o reportes comerciales tecnicos o administrativos
+5. Hacer reportes para cargadores que se han de visitar on-site
+6. Hacer informes remotos sobre los logs de eventos de los cargadores
+7. Hacer certificados de validacion OCPP
 
 ## Reglas base
 - Si no hay novedad real: `[SILENT]`
