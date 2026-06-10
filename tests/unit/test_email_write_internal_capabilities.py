@@ -11,6 +11,8 @@ def test_write_auto_appends_internal_capability_triggers_for_internal_mail():
     assert "subject=" in body
     assert "body=" in body
     assert out["internal_capabilities"]["mode"] == "compact"
+    assert out["body_html"] is not None
+    assert "<a href=" in out["body_html"]
 
 
 def test_write_can_force_and_select_trigger():

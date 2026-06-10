@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from html import escape
 from typing import Any, Dict, List, Sequence
 from urllib.parse import quote
 
@@ -186,6 +187,25 @@ def build_internal_capabilities_compact_block(name: str = "Lore", to_email: str 
 
     selected = _selected_item(items, selected_trigger)
 
+    html_lines = [
+        '<div style="font-family:Arial,sans-serif; line-height:1.55; color:#222;">',
+        '<p style="margin:0 0 12px 0; font-weight:600;">Podes contar conmigo para:</p>',
+        '<table role="presentation" cellpadding="0" cellspacing="0" style="border-collapse:collapse; width:100%;">',
+    ]
+    for item in items:
+        label = escape(item["label"])
+        href = escape(item["mailto_url"], quote=True)
+        html_lines.append(
+            '<tr>'
+            f'<td style="padding:4px 0; vertical-align:top; white-space:nowrap;">&gt;</td>'
+            f'<td style="padding:4px 0;">'
+            f'<a href="{href}" style="color:#0b57d0; text-decoration:none;">{item["index"]}) {label}</a>'
+            '</td>'
+            '</tr>'
+        )
+    html_lines.append('</table>')
+    html_lines.append('</div>')
+
     return {
         "enabled": True,
         "mode": "compact",
@@ -195,4 +215,30 @@ def build_internal_capabilities_compact_block(name: str = "Lore", to_email: str 
         "items": items,
         "selected": selected,
         "text": "\n".join(lines),
+        "html": "".join(html_lines),
     }
+
+
+def build_internal_capabilities_html_block(name: str = "Lore", to_email: str = INTERNAL_MAIL_TO, selected_trigger: str | None = None) -> Dict[str, Any]:
+    block = build_internal_capabilities_compact_block(name=name, to_email=to_email, selected_trigger=selected_trigger)
+    html_lines = [
+        '<div style="font-family:Arial,sans-serif; line-height:1.55; color:#222;">',
+        '<p style="margin:0 0 12px 0; font-weight:600;">Podes contar conmigo para:</p>',
+        '<table role="presentation" cellpadding="0" cellspacing="0" style="border-collapse:collapse; width:100%;">',
+    ]
+    for item in block["items"]:
+        label = escape(item["label"])
+        href = escape(item["mailto_url"], quote=True)
+        html_lines.append(
+            '<tr>'
+            f'<td style="padding:4px 0; vertical-align:top; white-space:nowrap;">&gt;</td>'
+            f'<td style="padding:4px 0;">'
+            f'<a href="{href}" style="color:#0b57d0; text-decoration:none;">{item["index"]}) {label}</a>'
+            '</td>'
+            '</tr>'
+        )
+    html_lines.append('</table>')
+    html_lines.append('</div>')
+    block["html"] = "".join(html_lines)
+    block["mode"] = "compact-html"
+    return block

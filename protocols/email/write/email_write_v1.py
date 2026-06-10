@@ -6,6 +6,7 @@ from shared.orchestration.internal_capability_catalog_v1 import (
     INTERNAL_MAIL_TO,
     build_internal_capabilities_block,
     build_internal_capabilities_compact_block,
+    build_internal_capabilities_html_block,
     is_internal_team_email,
 )
 
@@ -38,11 +39,18 @@ def run(inputs: Dict[str, Any]) -> Dict[str, Any]:
     include_capabilities = bool(include_capabilities)
 
     body = _base_body(name, context, next_step)
+    body_html = None
     internal_capabilities = None
 
     if include_capabilities:
         if capability_mode == "full":
             block = build_internal_capabilities_block(
+                name=name or "Laia",
+                to_email=INTERNAL_MAIL_TO,
+                selected_trigger=selected_trigger,
+            )
+        elif capability_mode == "html":
+            block = build_internal_capabilities_html_block(
                 name=name or "Laia",
                 to_email=INTERNAL_MAIL_TO,
                 selected_trigger=selected_trigger,
@@ -55,10 +63,17 @@ def run(inputs: Dict[str, Any]) -> Dict[str, Any]:
             )
         internal_capabilities = block
         body = f"{body}\n\n{block['text']}"
+        body_html = (
+            '<html><body style="font-family:Arial,sans-serif; white-space:normal; line-height:1.5;">'
+            f'<div style="white-space:pre-wrap;">{body.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")}</div>'
+            f'{block.get("html", "")}'
+            '</body></html>'
+        )
 
     return {
         "protocol_id": PROTOCOL_ID,
         "body": body,
+        "body_html": body_html,
         "internal_capabilities": internal_capabilities,
         "trigger_selector": {
             "query": trigger_query,
