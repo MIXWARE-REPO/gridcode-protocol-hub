@@ -4,7 +4,11 @@ from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, List
 
-from shared.orchestration.internal_capability_catalog_v1 import build_internal_capabilities_block, is_internal_team_email
+from shared.orchestration.internal_capability_catalog_v1 import (
+    build_internal_capabilities_block,
+    is_internal_team_email,
+    select_internal_capability,
+)
 
 STYLE_SKILL = "email-style-grid-code"
 
@@ -149,6 +153,7 @@ def orchestrate_email_response(payload: Dict[str, Any]) -> Dict[str, Any]:
     - tareas sugeridas para agenda/seguimiento
     - validación de estilo base
     - catálogo de capacidades internas verificadas por trigger
+    - selector del trigger correcto para el contexto
     """
     instruction = payload.get("instruction", "")
     topic = payload.get("topic", "tema en seguimiento")
@@ -164,15 +169,23 @@ def orchestrate_email_response(payload: Dict[str, Any]) -> Dict[str, Any]:
     style = apply_style_guardrails(final_body)
     confirm = build_confirmation_block(to_email, subject, final_body, commitments, tasks)
 
+    selector_query = f"{instruction} {topic} {subject} {final_body}"
+    selector = select_internal_capability(selector_query)
+
     internal_capabilities = None
     if is_internal_team_email(to_email):
-        internal_capabilities = build_internal_capabilities_block(name=contact_name, to_email="laia@grid-code.tech")
+        internal_capabilities = build_internal_capabilities_block(
+            name=contact_name,
+            to_email="laia@grid-code.tech",
+            selected_trigger=(selector["selected"]["trigger_id"] if selector["selected"] else None),
+        )
 
     return {
         "protocol": "email_response_orchestrator_v1",
         "style_validation": style,
         "confirmation": confirm,
-        "internal_capabilities": internal_capabilities or {"enabled": False, "items": [], "count": 0, "text": ""},
+        "internal_capabilities": internal_capabilities or {"enabled": False, "items": [], "count": 0, "text": "", "selected": None},
+        "trigger_selector": selector,
         "task_creation": {
             "provider": "google_tasks",
             "needs_user_slot_confirmation": len(commitments) > 0,

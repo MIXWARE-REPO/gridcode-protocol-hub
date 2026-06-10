@@ -20,7 +20,9 @@ Centralizar la decisión sobre el correo entrante para evitar duplicidad entre s
 - expone un catálogo verificado de capacidades internas con triggers por mailto para reutilización inmediata
 
 ## Catálogo interno verificado
-Cuando el destinatario es equipo interno, la respuesta puede incluir un bloque de capacidades con enlaces tipo `mailto:`. Cada línea arranca con `>` para que el equipo la vea como opción accionable.
+Cuando el destinatario es equipo interno, la respuesta incluye un bloque de capacidades con enlaces tipo `mailto:`. Cada línea arranca con `>` para que el equipo la vea como opción accionable.
+
+Además, el router mantiene un selector de trigger para elegir automáticamente la opción más probable según el contenido del mail. Si el operador hace click en el enlace, se abre un mail ya prearmado a Laia con el trigger correcto.
 
 Capacidades verificadas:
 1. Hacer una meet

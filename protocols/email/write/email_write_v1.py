@@ -2,7 +2,11 @@ from __future__ import annotations
 
 from typing import Any, Dict
 
-from shared.orchestration.internal_capability_catalog_v1 import build_internal_capabilities_block
+from shared.orchestration.internal_capability_catalog_v1 import (
+    INTERNAL_MAIL_TO,
+    build_internal_capabilities_block,
+    is_internal_team_email,
+)
 
 PROTOCOL_ID = "email_write_v1"
 
@@ -22,14 +26,24 @@ def run(inputs: Dict[str, Any]) -> Dict[str, Any]:
     name = inputs.get("name", "") or ""
     context = inputs.get("context", "su consulta")
     next_step = inputs.get("next_step", "Se gestionará con la prioridad correspondiente.")
-    include_capabilities = bool(inputs.get("include_internal_capabilities", False))
-    recipient_email = inputs.get("recipient_email", inputs.get("to_email", "laia@grid-code.tech"))
+    include_capabilities = inputs.get("include_internal_capabilities")
+    recipient_email = inputs.get("recipient_email", inputs.get("to_email", ""))
+    trigger_query = inputs.get("trigger_query", f"{context} {next_step}")
+    selected_trigger = inputs.get("selected_trigger")
+
+    if include_capabilities is None:
+        include_capabilities = bool(recipient_email and is_internal_team_email(recipient_email))
+    include_capabilities = bool(include_capabilities)
 
     body = _base_body(name, context, next_step)
     internal_capabilities = None
 
     if include_capabilities:
-        block = build_internal_capabilities_block(name=name or "Laia", to_email=recipient_email)
+        block = build_internal_capabilities_block(
+            name=name or "Laia",
+            to_email=INTERNAL_MAIL_TO,
+            selected_trigger=selected_trigger,
+        )
         internal_capabilities = block
         body = f"{body}\n\n{block['text']}"
 
@@ -37,4 +51,8 @@ def run(inputs: Dict[str, Any]) -> Dict[str, Any]:
         "protocol_id": PROTOCOL_ID,
         "body": body,
         "internal_capabilities": internal_capabilities,
+        "trigger_selector": {
+            "query": trigger_query,
+            "selected_trigger": selected_trigger,
+        },
     }
