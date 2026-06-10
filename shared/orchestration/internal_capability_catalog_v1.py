@@ -143,18 +143,52 @@ def select_internal_capability(query: str) -> Dict[str, Any]:
     }
 
 
+def _selected_item(items: List[Dict[str, Any]], selected_trigger: str | None) -> Dict[str, Any] | None:
+    if not selected_trigger:
+        return None
+    return next((item for item in items if item["trigger_id"] == selected_trigger), None)
+
+
 def build_internal_capabilities_block(name: str = "Lore", to_email: str = INTERNAL_MAIL_TO, selected_trigger: str | None = None) -> Dict[str, Any]:
     items = [cap.to_dict(index=i + 1, to_email=to_email) for i, cap in enumerate(VERIFIED_INTERNAL_CAPABILITIES)]
     lines = ["Podes contar conmigo para:"]
     for item in items:
         lines.append(f"> {item['index']}) {item['label']} - {item['mailto_url']}")
 
-    selected = None
-    if selected_trigger:
-        selected = next((item for item in items if item["trigger_id"] == selected_trigger), None)
+    selected = _selected_item(items, selected_trigger)
 
     return {
         "enabled": True,
+        "mode": "full",
+        "recipient_name": name,
+        "recipient_email": to_email,
+        "count": len(items),
+        "items": items,
+        "selected": selected,
+        "text": "\n".join(lines),
+    }
+
+
+def build_internal_capabilities_compact_block(name: str = "Lore", to_email: str = INTERNAL_MAIL_TO, selected_trigger: str | None = None) -> Dict[str, Any]:
+    items = [cap.to_dict(index=i + 1, to_email=to_email) for i, cap in enumerate(VERIFIED_INTERNAL_CAPABILITIES)]
+    compact_map = [
+        (1, "Meet", items[0]),
+        (2, "Calendario", items[1]),
+        (3, "Drive", items[2]),
+        (4, "Informes", items[3]),
+        (5, "On-site", items[4]),
+        (6, "Logs remotos", items[5]),
+        (7, "OCPP", items[6]),
+    ]
+    lines = ["Podes contar conmigo para:"]
+    for index, label, item in compact_map:
+        lines.append(f"> {index}) {label} - {item['mailto_url']}")
+
+    selected = _selected_item(items, selected_trigger)
+
+    return {
+        "enabled": True,
+        "mode": "compact",
         "recipient_name": name,
         "recipient_email": to_email,
         "count": len(items),

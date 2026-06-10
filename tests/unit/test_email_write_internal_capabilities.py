@@ -6,11 +6,11 @@ def test_write_auto_appends_internal_capability_triggers_for_internal_mail():
     out = run({"name": "Lore", "context": "grid-code", "recipient_email": "lore@grid-code.tech"})
     body = out["body"]
     assert "Podes contar conmigo para" in body
-    assert "> 1) Hacer una meet" in body
-    assert "> 7) Hacer certificados de validacion OCPP" in body
-    assert "mailto:laia@grid-code.tech" in body
+    assert "> 1) Meet - mailto:laia@grid-code.tech" in body
+    assert "> 7) OCPP - mailto:laia@grid-code.tech" in body
     assert "subject=" in body
     assert "body=" in body
+    assert out["internal_capabilities"]["mode"] == "compact"
 
 
 def test_write_can_force_and_select_trigger():
@@ -22,6 +22,7 @@ def test_write_can_force_and_select_trigger():
     })
     assert out["internal_capabilities"]["selected"]["trigger_id"] == "ocpp_certificate"
     assert out["trigger_selector"]["selected_trigger"] == "ocpp_certificate"
+    assert out["internal_capabilities"]["mode"] == "compact"
 
 
 def test_response_orchestrator_exposes_verified_trigger_catalog_and_selector():
@@ -39,3 +40,4 @@ def test_response_orchestrator_exposes_verified_trigger_catalog_and_selector():
     assert out["internal_capabilities"]["items"][6]["trigger_id"] == "ocpp_certificate"
     assert out["trigger_selector"]["selected"] is not None
     assert out["trigger_selector"]["selected"]["trigger_id"] in {item["trigger_id"] for item in out["internal_capabilities"]["items"]}
+    assert out["internal_capabilities"]["mode"] == "compact"

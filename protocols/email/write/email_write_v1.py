@@ -5,6 +5,7 @@ from typing import Any, Dict
 from shared.orchestration.internal_capability_catalog_v1 import (
     INTERNAL_MAIL_TO,
     build_internal_capabilities_block,
+    build_internal_capabilities_compact_block,
     is_internal_team_email,
 )
 
@@ -30,6 +31,7 @@ def run(inputs: Dict[str, Any]) -> Dict[str, Any]:
     recipient_email = inputs.get("recipient_email", inputs.get("to_email", ""))
     trigger_query = inputs.get("trigger_query", f"{context} {next_step}")
     selected_trigger = inputs.get("selected_trigger")
+    capability_mode = (inputs.get("capability_mode") or "compact").strip().lower()
 
     if include_capabilities is None:
         include_capabilities = bool(recipient_email and is_internal_team_email(recipient_email))
@@ -39,11 +41,18 @@ def run(inputs: Dict[str, Any]) -> Dict[str, Any]:
     internal_capabilities = None
 
     if include_capabilities:
-        block = build_internal_capabilities_block(
-            name=name or "Laia",
-            to_email=INTERNAL_MAIL_TO,
-            selected_trigger=selected_trigger,
-        )
+        if capability_mode == "full":
+            block = build_internal_capabilities_block(
+                name=name or "Laia",
+                to_email=INTERNAL_MAIL_TO,
+                selected_trigger=selected_trigger,
+            )
+        else:
+            block = build_internal_capabilities_compact_block(
+                name=name or "Laia",
+                to_email=INTERNAL_MAIL_TO,
+                selected_trigger=selected_trigger,
+            )
         internal_capabilities = block
         body = f"{body}\n\n{block['text']}"
 

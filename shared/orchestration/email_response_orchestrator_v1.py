@@ -6,6 +6,7 @@ from typing import Any, Dict, List
 
 from shared.orchestration.internal_capability_catalog_v1 import (
     build_internal_capabilities_block,
+    build_internal_capabilities_compact_block,
     is_internal_team_email,
     select_internal_capability,
 )
@@ -174,10 +175,11 @@ def orchestrate_email_response(payload: Dict[str, Any]) -> Dict[str, Any]:
 
     internal_capabilities = None
     if is_internal_team_email(to_email):
-        internal_capabilities = build_internal_capabilities_block(
+        selected_trigger = selector["selected"]["trigger_id"] if selector["selected"] else None
+        internal_capabilities = build_internal_capabilities_compact_block(
             name=contact_name,
             to_email="laia@grid-code.tech",
-            selected_trigger=(selector["selected"]["trigger_id"] if selector["selected"] else None),
+            selected_trigger=selected_trigger,
         )
 
     return {
