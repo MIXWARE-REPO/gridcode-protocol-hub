@@ -1,0 +1,383 @@
+
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <title>{{ report.title }}</title>
+  <style>
+    @page {
+      size: A4 portrait;
+      margin: 34mm 12mm 20mm 12mm;
+      background: #001518;
+      @top-center { content: element(page-header); }
+      @bottom-center { content: element(page-footer); }
+    }
+    :root {
+      --deep: #00272c;
+      --deep2: #073940;
+      --cyan: #169dae;
+      --cyan2: #2afcd6;
+      --muted: #91a6b1;
+      --border: rgba(42, 252, 214, 0.18);
+      --border2: rgba(255, 255, 255, 0.12);
+      --ok: #2dd4a7;
+      --warn: #ffa500;
+      --bad: #ff5757;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { font-family: "Microsoft JhengHei Light", "Microsoft JhengHei", Arial, sans-serif; background: #001518; color: #fff; -webkit-font-smoothing: antialiased; }
+    body { margin: 0; padding: 0; }
+    .header, .footer { position: running(page-header); }
+    .footer { position: running(page-footer); }
+    .hdr, .ftr {
+      width: 100%;
+      background: rgba(0, 39, 44, 0.82);
+      border-bottom: 1px solid var(--border);
+      border-top: 1px solid var(--border);
+      padding: 4mm 12mm;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6mm;
+    }
+    .hdr { border-top: none; }
+    .brand { display: flex; align-items: center; gap: 3mm; }
+    .mark {
+      width: 10mm; height: 10mm; border-radius: 2mm;
+      background: linear-gradient(135deg, var(--cyan), var(--cyan2));
+      display: grid; place-items: center;
+      color: #001518; font-weight: 800; font-size: 5mm; letter-spacing: .02em;
+    }
+    .brandtxt { display: flex; flex-direction: column; }
+    .brandname { font-size: 14pt; font-weight: 800; letter-spacing: .04em; line-height: 1; }
+    .brandtag { font-size: 6.5pt; color: var(--cyan2); letter-spacing: .18em; text-transform: uppercase; margin-top: 1mm; }
+    .rtype { text-align: right; }
+    .rtype .t { font-size: 12pt; font-weight: 700; color: var(--cyan2); text-transform: uppercase; letter-spacing: .04em; }
+    .rtype .s { font-size: 7.5pt; color: var(--muted); margin-top: 1mm; letter-spacing: .04em; }
+    .ftr { border-bottom: none; border-top: 1px solid var(--border); font-size: 6.5pt; color: var(--muted); }
+    .f-left { display: flex; flex-direction: column; gap: 1mm; }
+    .f-right { text-align: right; white-space: nowrap; }
+    .page-number::before { content: counter(page); }
+    .page-count::before { content: counter(pages); }
+    .page { padding: 8mm 0 0 0; }
+    .body-shell { padding: 0 12mm; }
+    .section {
+      background: rgba(0, 0, 0, 0.23);
+      border: 1px solid var(--border2);
+      border-radius: 10px;
+      padding: 4mm 5mm;
+      margin-bottom: 3mm;
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+    .section-title {
+      font-size: 9.6pt;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 2mm;
+      text-transform: uppercase;
+      letter-spacing: .03em;
+      margin-bottom: 2mm;
+    }
+    .section-title:before { content: ''; width: 3px; height: 4mm; border-radius: 2px; background: var(--cyan2); }
+    .section-sub { font-size: 8pt; color: var(--muted); margin-left: 1mm; }
+    .ident {
+      display: grid;
+      grid-template-columns: 1.2fr 1.25fr .9fr;
+      gap: 4mm;
+      align-items: stretch;
+    }
+    .id-main { padding-right: 3mm; border-right: 1px solid var(--border2); }
+    .id-label { font-size: 7pt; color: var(--cyan2); text-transform: uppercase; letter-spacing: .14em; font-weight: 600; }
+    .id-value { font-size: 18pt; font-weight: 800; line-height: 1.05; margin-top: 1mm; }
+    .id-loc { font-size: 8.5pt; color: var(--muted); margin-top: 1.5mm; line-height: 1.3; }
+    .meta {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2mm 4mm;
+      align-content: center;
+      padding-left: 2mm;
+      border-right: 1px solid var(--border2);
+    }
+    .meta div { display: flex; flex-direction: column; gap: .3mm; }
+    .meta span { font-size: 6.7pt; color: var(--muted); text-transform: uppercase; letter-spacing: .12em; }
+    .meta b { font-size: 8.8pt; font-weight: 600; }
+    .window { text-align: right; display: flex; flex-direction: column; align-items: flex-end; justify-content: center; gap: 1mm; }
+    .window .label { font-size: 6.8pt; color: var(--cyan2); text-transform: uppercase; letter-spacing: .14em; font-weight: 700; }
+    .window .value {
+      font-size: 11pt; font-weight: 800;
+      border: 1px solid var(--border);
+      background: linear-gradient(135deg, rgba(42, 252, 214, .2), rgba(22, 157, 174, .05));
+      padding: 1.1mm 3.5mm; border-radius: 999px; white-space: nowrap;
+    }
+    .window .range { font-size: 8pt; color: var(--muted); }
+    .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2mm; }
+    .kpi {
+      background: rgba(0, 0, 0, .2);
+      border: 1px solid var(--border2);
+      border-radius: 8px;
+      padding: 2.5mm 2.5mm 2.8mm;
+    }
+    .kpi span {
+      display: block;
+      font-size: 6.2pt;
+      text-transform: uppercase;
+      letter-spacing: .11em;
+      color: var(--cyan2);
+      min-height: 5.8mm;
+      line-height: 1.2;
+      font-weight: 700;
+    }
+    .kpi b { display: block; margin-top: .6mm; font-size: 13.5pt; line-height: 1; font-weight: 800; }
+    .prose { font-size: 9.3pt; line-height: 1.5; color: rgba(255, 255, 255, .92); }
+    .table { width: 100%; border-collapse: collapse; font-size: 8.5pt; }
+    .table th {
+      background: rgba(22, 157, 174, .18);
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      font-size: 7pt;
+      font-weight: 800;
+      padding: 2mm 2.5mm;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+    }
+    .table td {
+      padding: 2mm 2.5mm;
+      border-bottom: 1px solid var(--border2);
+      vertical-align: top;
+      line-height: 1.35;
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 6.8pt;
+      font-weight: 800;
+      padding: .55mm 2.4mm;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      white-space: nowrap;
+    }
+    .pill.ok { background: rgba(45, 212, 167, .13); color: #6eebbe; border: 1px solid rgba(45, 212, 167, .35); }
+    .pill.warn { background: rgba(255, 165, 0, .13); color: #ffd28a; border: 1px solid rgba(255, 165, 0, .35); }
+    .pill.bad { background: rgba(255, 87, 87, .13); color: #ff9b9b; border: 1px solid rgba(255, 87, 87, .35); }
+    .list { margin: 1.5mm 0 0 5mm; color: rgba(255, 255, 255, .92); }
+    .list li { margin: 1.2mm 0; font-size: 9pt; line-height: 1.42; }
+    .diag {
+      display: grid;
+      grid-template-columns: 1.55fr 1fr;
+      gap: 3mm;
+    }
+    .diagbox {
+      background: rgba(0, 0, 0, .16);
+      border: 1px solid var(--border2);
+      border-radius: 8px;
+      padding: 2.5mm 4mm;
+      display: flex;
+      flex-direction: column;
+      gap: 1.3mm;
+    }
+    .diaglabel {
+      font-size: 6.7pt;
+      color: var(--cyan2);
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      font-weight: 800;
+    }
+    .diagbox p { font-size: 9.2pt; line-height: 1.45; color: #fff; }
+    .chip {
+      display: inline-flex;
+      align-self: flex-start;
+      border-radius: 999px;
+      padding: 1.5mm 3mm;
+      font-size: 8.5pt;
+      font-weight: 800;
+      border: 1px solid;
+    }
+    .chip.orange { background: rgba(255, 165, 0, .12); color: #ffd28a; border-color: rgba(255, 165, 0, .35); }
+    .chip.cyan { background: rgba(22, 157, 174, .12); color: var(--cyan2); border-color: rgba(22, 157, 174, .35); }
+    .chip.green { background: rgba(45, 212, 167, .12); color: #6eebbe; border-color: rgba(45, 212, 167, .35); }
+    .client {
+      background: rgba(22, 157, 174, .05);
+      border: 1px solid rgba(22, 157, 174, .18);
+      border-left: 3px solid var(--cyan);
+      border-radius: 6px;
+      padding: 2.5mm 4mm;
+    }
+    .client p { font-size: 9pt; line-height: 1.5; color: rgba(255, 255, 255, .88); font-style: italic; }
+    .rule {
+      background: rgba(255, 165, 0, .06);
+      border: 1px solid rgba(255, 165, 0, .24);
+      border-left: 3px solid var(--warn);
+      border-radius: 6px;
+      padding: 2.5mm 4mm;
+    }
+    .rule p { font-size: 9pt; line-height: 1.45; color: rgba(255, 255, 255, .9); }
+    .filebox {
+      font-size: 9pt;
+      color: var(--cyan2);
+      word-break: break-all;
+      background: rgba(0, 0, 0, .28);
+      border: 1px dashed var(--border);
+      border-radius: 6px;
+      padding: 3mm 4mm;
+    }
+    .muted { color: var(--muted); }
+    .page-break { break-after: page; page-break-after: always; }
+    @media print { * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; } }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="hdr">
+      <div class="brand">
+        <div class="mark">GC</div>
+        <div class="brandtxt">
+          <span class="brandname">GRIDCODE</span>
+          <span class="brandtag">Transición Energética</span>
+        </div>
+      </div>
+      <div class="rtype">
+        <div class="t">Diagnóstico Técnico Remoto</div>
+        <div class="s">Informe técnico de logs · Webasto UNITE · {{ report.building }}</div>
+      </div>
+    </div>
+  </header>
+  <footer class="footer">
+    <div class="ftr">
+      <div class="f-left">
+        <span>Documento confidencial · Uso interno y destinatarios autorizados · Protección de datos UE</span>
+        <span><span style="color:var(--cyan2)">grid-code.tech</span> · {{ report.analyst_name }}</span>
+      </div>
+      <div class="f-right">Página <span class="page-number"></span> / <span class="page-count"></span></div>
+    </div>
+  </footer>
+
+  <main class="page">
+    <div class="body-shell">
+      <section class="section ident">
+        <div class="id-main">
+          <div class="id-label">Plaza / Cargador</div>
+          <div class="id-value">{{ report.charger_id }}</div>
+          <div class="id-loc">{{ report.building }} · {{ report.charger_ip }} · {{ report.title }}</div>
+        </div>
+        <div class="meta">
+          <div><span>Ticket</span><b>{{ report.ticket_id }}</b></div>
+          <div><span>Analista</span><b>{{ report.analyst_name }}</b></div>
+          <div><span>Archivo evidencia</span><b>{{ report.log_zip_name }}</b></div>
+          <div><span>Tamaño ZIP</span><b>{{ report.log_zip_bytes }} bytes</b></div>
+          <div><span>Emisión</span><b>{{ report.generated_at_cest }}</b></div>
+          <div><span>Fuente</span><b>Playwright estático</b></div>
+        </div>
+        <div class="window">
+          <span class="label">Ventana analizada</span>
+          <span class="value">{{ report.metrics.window_start_label }} → {{ report.metrics.window_end_label }}</span>
+          <span class="range">{{ report.metrics.window_start }} → {{ report.metrics.window_end }}</span>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-title">Resumen ejecutivo</div>
+        <div class="prose">{{ report.summary }}</div>
+      </section>
+
+      <section class="section">
+        <div class="section-title">Indicador de funcionalidad</div>
+        <table class="table">
+          <tr>
+            <td style="width:32mm"><b>Estado</b></td>
+            <td><span class="pill {{ report.metrics.functional_band_class }}">{{ report.metrics.functional_band_label }}</span></td>
+            <td style="width:30mm"><b>Funcionalidad</b></td>
+            <td>{{ report.metrics.functional_pct }}%</td>
+          </tr>
+          <tr>
+            <td><b>Operación</b></td>
+            <td>{{ report.metrics.diagnosis.cause }}</td>
+            <td><b>Horas cubiertas</b></td>
+            <td>{{ report.metrics.hours_covered }}</td>
+          </tr>
+          <tr>
+            <td><b>Conclusión</b></td>
+            <td colspan="3">{{ report.metrics.diagnosis.finding }}</td>
+          </tr>
+        </table>
+      </section>
+
+      <section class="section">
+        <div class="section-title">Métricas principales</div>
+        <table class="table">
+          <tr><th>Métrica</th><th>Valor</th><th>Métrica</th><th>Valor</th></tr>
+          <tr><td>Sesiones totales</td><td>{{ report.metrics.file_count }}</td><td>Connection OK</td><td>{{ report.metrics.connection_ok }}</td></tr>
+          <tr><td>Errores conexión</td><td>{{ report.metrics.connection_errors }}</td><td>Smart dealer OK</td><td>{{ report.metrics.smartdealer_ok }}</td></tr>
+          <tr><td>Ping</td><td>{{ report.metrics.ping_count }}</td><td>Pong</td><td>{{ report.metrics.pong_count }}</td></tr>
+          <tr><td>No Usable Schedule</td><td>{{ report.metrics.no_usable_schedule }}</td><td>RestartCount final</td><td>{{ report.metrics.restart_count_last if report.metrics.restart_count_last is not none else '—' }}</td></tr>
+          <tr><td>Eficiencia de conexión</td><td>{{ report.metrics.functional_pct }}%</td><td>ZIP</td><td>{{ report.log_zip_bytes }} bytes</td></tr>
+        </table>
+      </section>
+
+      <section class="section">
+        <div class="section-title">Hallazgos y evidencia</div>
+        <ul class="list">{% for item in report.findings %}<li>{{ item }}</li>{% endfor %}</ul>
+      </section>
+
+      <section class="section">
+        <div class="section-title">Riesgos</div>
+        <ul class="list">{% for item in report.risks %}<li>{{ item }}</li>{% endfor %}</ul>
+      </section>
+
+      <section class="section">
+        <div class="section-title">Acciones recomendadas</div>
+        <ul class="list">{% for item in report.recommended_actions %}<li>{{ item }}</li>{% endfor %}</ul>
+      </section>
+
+      <section class="section">
+        <div class="section-title">Diagnóstico técnico</div>
+        <div class="diag">
+          <div class="diagbox">
+            <span class="diaglabel">Capa afectada</span>
+            <span class="chip cyan">{{ report.metrics.diagnosis.layer }}</span>
+            <span class="diaglabel">Hallazgo dominante</span>
+            <p>{{ report.metrics.diagnosis.finding }}</p>
+            <span class="diaglabel">Causa probable principal</span>
+            <span class="chip orange">{{ report.metrics.diagnosis.cause }}</span>
+          </div>
+          <div class="diagbox">
+            <span class="diaglabel">Certeza del diagnóstico</span>
+            <span class="chip green">{{ report.metrics.diagnosis.certainty }}</span>
+            <span class="diaglabel">En términos operativos</span>
+            <div class="client"><p>{{ report.metrics.diagnosis.client }}</p></div>
+          </div>
+        </div>
+        <div class="rule" style="margin-top:2mm"><span class="diaglabel">Alcance y límites del análisis remoto</span><p>{{ report.metrics.diagnosis.limit }}</p></div>
+        <div class="rule" style="margin-top:2mm"><span class="diaglabel">Recomendación prioritaria</span><p>{{ report.metrics.diagnosis.recommendation }}</p></div>
+      </section>
+
+      <section class="section">
+        <div class="section-title">Resumen por fichero</div>
+        <table class="table">
+          <tr><th>Fichero</th><th>Fecha</th><th>Tamaño</th><th>Connection OK</th><th>Errores</th><th>RestartCount final</th><th>Ping / Pong</th></tr>
+          {% for row in report.daily_rows %}
+          <tr><td>{{ row.name }}</td><td>{{ row.date_label }}</td><td>{{ row.size_mb }}</td><td>{{ row.connection_ok }}</td><td>{{ row.connection_errors }}</td><td>{{ row.restart_count_last }}</td><td>{{ row.ping_count }} / {{ row.pong_count }}</td></tr>
+          {% endfor %}
+        </table>
+      </section>
+
+      <section class="section">
+        <div class="section-title">Eventos notables</div>
+        <table class="table">
+          <tr><th>Fecha</th><th>Origen</th><th>Señal</th><th>Detalle</th></tr>
+          {% for ev in report.notable_events %}<tr><td>{{ ev.date }}</td><td>{{ ev.origin }}</td><td>{{ ev.signal }}</td><td>{{ ev.detail }}</td></tr>{% endfor %}
+        </table>
+      </section>
+
+      <section class="section">
+        <div class="section-title">Trazabilidad y evidencia</div>
+        {% for ev in report.evidence_files %}<div class="filebox">{{ ev.path }}<br><span class="muted">{{ ev.size_bytes }} bytes</span></div>{% endfor %}
+      </section>
+    </div>
+  </main>
+</body>
+</html>

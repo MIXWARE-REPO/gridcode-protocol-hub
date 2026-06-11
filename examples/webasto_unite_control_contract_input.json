@@ -1,0 +1,7 @@
+{
+  "action": "change_ocpp_endpoint",
+  "charger_ip": "10.23.45.67",
+  "plaza": "P-14",
+  "serie": "WSU-138-ABCD",
+  "id_colonial": "COL-138"
+}

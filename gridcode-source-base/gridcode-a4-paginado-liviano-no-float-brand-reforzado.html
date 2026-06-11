@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>{{ report_title or 'Informe Técnico' }}</title>
+<style>
+  @page {
+    size: A4 portrait;
+    margin: 0;
+  }
+
+@font-face {
+    font-family: 'MontserratAlt1';
+    src: url('file:///C:/Users/callm/Desktop/WEB%20GRIDCODE/gridcode-charger-service/server/templates/_base/fonts/MontserratAlt1-ExtraBold.woff2') format('woff2');
+    font-weight: 800; font-style: normal; font-display: block;
+}
+@font-face {
+    font-family: 'MontserratAlt1';
+    src: url('file:///C:/Users/callm/Desktop/WEB%20GRIDCODE/gridcode-charger-service/server/templates/_base/fonts/MontserratAlt1-Bold.woff2') format('woff2');
+    font-weight: 700; font-style: normal; font-display: block;
+}
+@font-face {
+    font-family: 'MontserratAlt1';
+    src: url('file:///C:/Users/callm/Desktop/WEB%20GRIDCODE/gridcode-charger-service/server/templates/_base/fonts/MontserratAlt1-SemiBold.woff2') format('woff2');
+    font-weight: 600; font-style: normal; font-display: block;
+}
+@font-face {
+    font-family: 'MontserratAlt1';
+    src: url('file:///C:/Users/callm/Desktop/WEB%20GRIDCODE/gridcode-charger-service/server/templates/_base/fonts/MontserratAlt1-Regular.woff2') format('woff2');
+    font-weight: 400; font-style: normal; font-display: block;
+}
+@font-face {
+    font-family: 'MontserratAlt1';
+    src: url('file:///C:/Users/callm/Desktop/WEB%20GRIDCODE/gridcode-charger-service/server/templates/_base/fonts/MontserratAlt1-Light.woff2') format('woff2');
+    font-weight: 300; font-style: normal; font-display: block;
+}
+
+  :root {
+    --gc-bg: #001518;
+    --gc-deep: #00272c;
+    --gc-deep-2: #073940;
+    --gc-cyan: #169dae;
+    --gc-cyan-bright: #2afcd6;
+    --gc-cyan-soft: #1fd9f0;
+    --gc-white: #ffffff;
+    --gc-muted: #91a6b1;
+    --gc-text: #d4eaef;
+    --gc-border: rgba(42,252,214,0.18);
+    --gc-border-soft: rgba(255,255,255,0.12);
+    --font-main: DejaVu Sans, Liberation Sans, Arial, sans-serif;
+    --header-h: 30mm;
+    --footer-h: 20mm;
+    --side-pad: 12mm;
+  }
+
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 297mm;
+    background: var(--gc-bg);
+    color: var(--gc-white);
+    font-family: var(--font-main);
+    -webkit-font-smoothing: antialiased;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  body {
+    position: relative;
+    min-height: 297mm;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .page-bg {
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(170deg, #00272c 0%, #011d21 60%, #001518 100%);
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .top-accent {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--gc-cyan) 0%, var(--gc-cyan-bright) 60%, transparent 100%);
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  /* NO FLOAT: header y footer deben ocupar espacio real en el flujo del documento.
+     No usar position: fixed, absolute ni sticky en estos bloques. */
+  .header {
+    position: static !important;
+    z-index: 3;
+    flex: 0 0 var(--header-h);
+    height: var(--header-h);
+    padding: 0 var(--side-pad);
+    background: rgba(0,39,44,0.92);
+    border-bottom: 1px solid var(--gc-border);
+    display: flex;
+    align-items: stretch;
+    box-sizing: border-box;
+  }
+  .header,
+  .footer-fixed {
+    top: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+  }
+
+  .brand-block {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex: 1;
+  }
+  .logo-mark {
+    width: 46px;
+    height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .logo-img {
+    width: 46px;
+    height: auto;
+    object-fit: contain;
+    opacity: .92;
+    display: block;
+  }
+  .brand-name { display: flex; flex-direction: column; }
+  .brand-wordmark { font-family: 'MontserratAlt1', Arial, sans-serif; font-weight: 800; font-size: 18pt; letter-spacing: .04em; line-height: 1; }
+  .brand-tagline { font-size: 7.5pt; color: var(--gc-cyan-bright); letter-spacing: .18em; text-transform: uppercase; margin-top: 3px; }
+  .meta-block {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 5px;
+    min-width: 174px;
+    border-left: 1px solid var(--gc-border-soft);
+    padding-left: 18px;
+    margin-left: 18px;
+  }
+  .meta-row { display: flex; gap: 8px; align-items: baseline; }
+  .meta-label { font-size: 6.5pt; color: var(--gc-muted); text-transform: uppercase; letter-spacing: .1em; white-space: nowrap; }
+  .meta-value { font-weight: 600; font-size: 8pt; color: var(--gc-cyan-soft); }
+  .doc-code-badge {
+    display: inline-flex; align-items: center;
+    background: rgba(42,252,214,.10);
+    border: 1px solid rgba(42,252,214,.25);
+    border-radius: 6px;
+    padding: 4px 12px;
+    font-family: Consolas, monospace;
+    font-size: 8.5pt;
+    color: var(--gc-cyan-bright);
+    letter-spacing: .04em;
+  }
+
+  .body-shell {
+    position: relative;
+    z-index: 1;
+    flex: 1 0 auto;
+    padding: 10mm var(--side-pad);
+    min-height: calc(297mm - var(--header-h) - var(--footer-h));
+    background: transparent;
+  }
+
+  .content-frame {
+    min-height: calc(297mm - var(--header-h) - var(--footer-h) - 20mm);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .addressed-banner {
+    border-bottom: 1px solid rgba(22,157,174,.20);
+    padding: 0 0 8px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 1mm;
+  }
+  .addressed-label { font-size: 7.5pt; color: var(--gc-muted); text-transform: uppercase; letter-spacing: .1em; white-space: nowrap; }
+  .addressed-value { font-size: 9.5pt; color: var(--gc-white); font-weight: 400; }
+
+  .case-title-section {
+    padding: 4mm 0 4mm;
+    border-bottom: 1px solid var(--gc-border);
+    margin-bottom: 2mm;
+    position: relative;
+  }
+  .case-title-section::before {
+    content: '';
+    position: absolute;
+    left: -12mm; top: 0; bottom: 0;
+    width: 4px;
+    background: linear-gradient(180deg, var(--gc-cyan-bright) 0%, var(--gc-cyan) 100%);
+  }
+  .case-type-label { font-size: 8pt; color: var(--gc-cyan-bright); letter-spacing: .18em; text-transform: uppercase; margin-bottom: 7px; display: flex; align-items: center; gap: 8px; }
+  .case-type-label::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, var(--gc-border) 0%, transparent 100%); }
+  .case-title { font-weight: 800; font-size: 19pt; color: var(--gc-white); line-height: 1.15; letter-spacing: .01em; max-width: 92%; margin: 0; }
+  .case-title .highlight { color: var(--gc-cyan-bright); }
+  .case-subtitle { margin-top: 9px; font-size: 10.5pt; color: var(--gc-muted); font-weight: 300; max-width: 86%; line-height: 1.45; }
+
+  .main-flow {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .body-content {
+    color: var(--gc-text);
+    flex: 1;
+  }
+  .body-content h2 {
+    color: var(--gc-cyan-soft);
+    line-height: 1.2;
+    page-break-after: avoid;
+    break-after: avoid;
+    font-size: 12pt;
+    font-weight: 700;
+    margin: 14px 0 7px;
+  }
+  .body-content p { margin: 0 0 8px; font-size: 10.1pt; line-height: 1.52; color: var(--gc-text); }
+  .body-content ul, .body-content ol { margin: 7px 0 10px 20px; color: var(--gc-text); }
+  .body-content li { margin-bottom: 4px; font-size: 10pt; line-height: 1.45; }
+  .body-content li::marker { color: var(--gc-cyan-bright); }
+  .body-content strong { color: var(--gc-white); font-weight: 700; }
+  .body-content code { font-family: Consolas, monospace; font-size: 8.6pt; background: rgba(42,252,214,.10); border: 1px solid rgba(42,252,214,.20); border-radius: 3px; padding: 1px 5px; color: var(--gc-cyan-bright); }
+  .body-content blockquote { border-left: 3px solid var(--gc-cyan); padding: 8px 13px; margin: 10px 0; background: rgba(22,157,174,.08); border-radius: 0 6px 6px 0; color: var(--gc-muted); }
+  .body-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0 12px;
+    font-size: 8.7pt;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  .body-content th { background: rgba(22,157,174,.15); color: var(--gc-cyan-soft); font-weight: 700; padding: 6px 8px; text-align: left; border: 1px solid var(--gc-border); }
+  .body-content td { padding: 5px 8px; border: 1px solid rgba(255,255,255,.07); color: var(--gc-text); vertical-align: top; }
+  .body-content tr:nth-child(even) td { background: rgba(255,255,255,.03); }
+  .report-block { break-inside: avoid; page-break-inside: avoid; margin-bottom: 8px; }
+  .compact p, .compact li { font-size: 9.6pt; line-height: 1.4; }
+
+  .signature-section {
+    margin-top: 6px;
+    padding-top: 8px;
+    border-top: 1px solid var(--gc-border);
+    display: flex;
+    justify-content: flex-end;
+    background: rgba(0,39,44,.14);
+  }
+  .sig-block { display: flex; flex-direction: column; gap: 6px; width: 220px; }
+  .sig-header { font-size: 7pt; color: var(--gc-muted); text-transform: uppercase; letter-spacing: .12em; }
+  .sig-line-long { height: 30px; border-bottom: 1px solid rgba(255,255,255,.22); }
+  .sig-name { font-weight: 600; font-size: 9.5pt; color: var(--gc-white); }
+  .sig-role, .sig-date { font-size: 8pt; color: var(--gc-muted); }
+
+  .footer-note {
+    margin-top: 6px;
+    color: var(--gc-muted);
+    font-size: 8pt;
+    border-top: 1px solid var(--gc-border);
+    padding-top: 6px;
+  }
+
+  .footer-fixed {
+    position: static !important;
+    flex: 0 0 var(--footer-h);
+    height: var(--footer-h);
+    margin-top: auto;
+    padding: 9px var(--side-pad);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(0,39,44,.86);
+    border-top: 1px solid var(--gc-border);
+    z-index: 3;
+    box-sizing: border-box;
+  }
+  .footer-text { font-size: 6.5pt; color: var(--gc-muted); line-height: 1.35; }
+  .footer-text span { color: var(--gc-cyan); font-family: 'MontserratAlt1', Arial, sans-serif; font-weight: 800; letter-spacing: .04em; }
+  .footer-right { font-size: 6.5pt; color: var(--gc-muted); text-align: right; line-height: 1.45; }
+  .page-number::after { content: counter(page) " / " counter(pages); color: var(--gc-cyan-soft); }
+
+  .page-mask {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 0;
+    background: radial-gradient(circle at top right, rgba(22,157,174,0.12) 0%, transparent 30%),
+                radial-gradient(circle at bottom left, rgba(42,252,214,0.07) 0%, transparent 26%);
+  }
+</style>
+</head>
+<body>
+  <div class="page-bg"></div>
+  <div class="top-accent"></div>
+  <div class="page-mask"></div>
+
+  <header class="header">
+    <div class="brand-block">
+      <div class="logo-mark"><img src="file:///C:/Users/callm/Desktop/WEB%20GRIDCODE/gridcode-charger-service/server/templates/_base/logo.png" alt="Grid Code" class="logo-img"></div>
+      <div class="brand-name">
+        <span class="brand-wordmark">GRIDCODE</span>
+        <span class="brand-tagline">Transición Energética</span>
+      </div>
+    </div>
+    <div class="meta-block">
+      <div class="doc-code-badge">{{ report_code or 'IAP-GC-20260609-RE01' }}</div>
+      <div class="meta-row"><span class="meta-label">Fecha</span><span class="meta-value">{{ report_date or '9 June 2026' }}</span></div>
+      <div class="meta-row"><span class="meta-label">Autor</span><span class="meta-value">{{ author or 'Departamento Técnico Grid-Code' }}</span></div>
+    </div>
+  </header>
+
+  <div class="body-shell">
+    <div class="content-frame">
+      <div class="addressed-banner">
+        <span class="addressed-label">Proyecto</span>
+        <span class="addressed-value">{{ project_name or 'Hidrica Group' }}</span>
+      </div>
+
+      <section class="case-title-section">
+        <div class="case-type-label">{{ case_type or 'Informe técnico' }}</div>
+        <h1 class="case-title">{{ report_title_prefix or 'Informe técnico de análisis de oscilación DLM por entrada simultánea de cargadores — ' }}<span class="highlight">{{ report_title_highlight or 'Hidrica Group' }}</span></h1>
+        <p class="case-subtitle">{{ report_subtitle or 'Basado en el reporte técnico estándar cargado por el usuario' }}</p>
+      </section>
+
+      <main class="main-flow">
+        <div class="body-content">
+          {{ body_content | safe if body_content else '' }}
+        </div>
+        {% if signature_name or signature_role or signature_date %}
+        <section class="signature-section">
+          <div class="sig-block">
+            <div class="sig-header">Firma / validación</div>
+            <div class="sig-line-long"></div>
+            <div class="sig-name">{{ signature_name or 'Departamento Técnico Grid-Code' }}</div>
+            <div class="sig-role">{{ signature_role or '' }}</div>
+            <div class="sig-date">{{ signature_date or '' }}</div>
+          </div>
+        </section>
+        {% endif %}
+        {% if footer_note or footer_text %}
+        <div class="footer-note">{{ footer_note or footer_text }}</div>
+        {% endif %}
+      </main>
+    </div>
+  </div>
+
+  <footer class="footer-fixed">
+    <div class="footer-text">
+      <span>GRIDCODE</span> · connect@grid-code.tech · grid-code.tech<br>
+      {{ footer_text or 'Documento técnico — confidencial, de uso interno y para cliente contratado' }}
+    </div>
+    <div class="footer-right">
+      Grid Code · Transición Energética<br>
+      Página <span class="page-number"></span>
+    </div>
+  </footer>
+</body>
+</html>

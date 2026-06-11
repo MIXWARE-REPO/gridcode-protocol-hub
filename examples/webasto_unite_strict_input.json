@@ -1,0 +1,19 @@
+{
+  "run_id": "demo-wu-001",
+  "charger_ip": "192.168.31.138",
+  "charger_label": "138",
+  "username": "sanmin",
+  "password": "REEMPLAZAR_PASSWORD",
+  "ocpp_endpoint": "192.168.31.166:2880",
+  "free_charge_mode_active": false,
+  "set_static_network": false,
+  "static_ip": null,
+  "netmask": "255.255.255.0",
+  "gateway": null,
+  "dns_primary": "8.8.8.8",
+  "download_logs": true,
+  "download_wait_seconds": 240,
+  "do_soft_reset": false,
+  "do_hard_reset": false,
+  "headless": true
+}

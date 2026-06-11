@@ -1,0 +1,19 @@
+{
+  "run_id": "webasto-142-to-wings-ocpp",
+  "charger_ip": "192.168.31.142",
+  "charger_label": "142",
+  "username": "admin",
+  "password": "L6=8YC&?%mE6&Y&3-6f9",
+  "ocpp_endpoint": "ws://wings.grid-code.tech:8080",
+  "free_charge_mode_active": false,
+  "set_static_network": false,
+  "static_ip": null,
+  "netmask": "255.255.255.0",
+  "gateway": null,
+  "dns_primary": "8.8.8.8",
+  "download_logs": false,
+  "download_wait_seconds": 240,
+  "do_soft_reset": false,
+  "do_hard_reset": false,
+  "headless": true
+}

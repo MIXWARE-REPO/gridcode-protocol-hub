@@ -1,0 +1,46 @@
+{
+  "version": "webasto_unite_strict_playwright_v1",
+  "status": "error",
+  "started_at": "2026-05-26T16:36:47.691131+00:00",
+  "ended_at": "2026-05-26T16:40:54.768665+00:00",
+  "run_id": "webasto-prod-v2-144",
+  "charger": {
+    "label": "Plaza-144",
+    "ip": "192.168.31.144"
+  },
+  "applied": {
+    "ocpp_endpoint": "ws://v2.testing.grid-code.tech/ocpp",
+    "free_charge_mode_active": false,
+    "set_static_network_requested": false,
+    "static_network": {
+      "static_ip": null,
+      "netmask": "255.255.255.0",
+      "gateway": null,
+      "dns_primary": "8.8.8.8"
+    },
+    "do_soft_reset_requested": false,
+    "do_hard_reset_requested": false
+  },
+  "result": {
+    "actions": [
+      "login",
+      "open_ocpp_settings"
+    ],
+    "warnings": [
+      "ocpp_var_not_found:freeChargeModeActive"
+    ],
+    "errors": [
+      "runtime_error:Page.click: Timeout 240000ms exceeded.\nCall log:\n  - waiting for locator(\"input#ocpp_button[name=\\\"ocpp_button\\\"]\")\n"
+    ],
+    "ocpp_before": {
+      "centralSystemAddress": "ws://v2.testing.grid-code.tech/ocpp"
+    },
+    "ocpp_after": {}
+  },
+  "artifacts": {
+    "run_dir": "/home/laia/gridcode-protocol-hub/out/webasto-unite-runs/20260526_173647_webasto-prod-v2-144_Plaza-144_192_168_31_144",
+    "webui_result_json": "/home/laia/gridcode-protocol-hub/out/webasto-unite-runs/20260526_173647_webasto-prod-v2-144_Plaza-144_192_168_31_144/01_webui_result.json",
+    "downloads": [],
+    "screenshots": []
+  }
+}

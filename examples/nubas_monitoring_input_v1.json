@@ -1,0 +1,5 @@
+{
+  "run_id": "nubas-demo-001",
+  "base_url": "https://REEMPLAZAR_NUBAS_URL",
+  "scope": "monitoring"
+}

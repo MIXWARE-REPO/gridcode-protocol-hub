@@ -1,0 +1,10 @@
+{
+  "count": 172,
+  "layer_counts": {
+    "frontend": 63,
+    "service": 40,
+    "backend": 69
+  },
+  "csv_path": "/home/laia/gridcode-protocol-hub/.hermes/inventories/skills_inventory_2026-06-10.csv",
+  "generated_at": "2026-06-10T22:04:01+02:00"
+}

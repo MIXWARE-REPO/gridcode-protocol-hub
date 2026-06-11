@@ -1,0 +1,33 @@
+{
+  "run_id": "demo-web-001",
+  "target_url": "https://example.com",
+  "browser": {
+    "headless": true,
+    "viewport_width": 1366,
+    "viewport_height": 900,
+    "navigation_timeout_ms": 30000,
+    "action_timeout_ms": 10000
+  },
+  "stop_on_error": true,
+  "capture_screenshots": true,
+  "steps": [
+    {
+      "id": "s1_wait_h1",
+      "action": "wait_visible",
+      "selector": "h1",
+      "timeout_ms": 10000
+    },
+    {
+      "id": "s2_assert_h1",
+      "action": "assert_text",
+      "selector": "h1",
+      "value": "Example Domain",
+      "timeout_ms": 10000
+    },
+    {
+      "id": "s3_screenshot",
+      "action": "screenshot",
+      "value": "final_example.png"
+    }
+  ]
+}

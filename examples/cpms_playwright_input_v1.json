@@ -1,0 +1,17 @@
+{
+  "run_id": "cpms-demo-001",
+  "base_url": "http://grid-code-1.local",
+  "username": "admin",
+  "password": "1234",
+  "headless": true,
+  "create_charger": true,
+  "charger_id": "142",
+  "charger_name": "Laia-demo-142",
+  "connector_count": 1,
+  "create_user": true,
+  "user_full_name": "Laia Botardo Gentile",
+  "user_username": "laia",
+  "user_password": "123456",
+  "user_tag_id": "REEMPLAZAR_RFID",
+  "user_company": "Grid Code"
+}

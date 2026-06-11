@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <title>Reporte Remoto Cargador</title>
+  <style>
+    body { font-family: Arial, sans-serif; color:#1b1f24; margin: 24px; }
+    .header { display:flex; justify-content:space-between; align-items:center; border-bottom: 2px solid #1f6feb; padding-bottom: 10px; }
+    .title { font-size: 24px; font-weight: 700; color:#1f6feb; }
+    .sub { font-size: 12px; color:#57606a; }
+    .grid { display:grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px; }
+    .card { border:1px solid #d0d7de; border-radius: 8px; padding: 10px; }
+    .k { font-size: 11px; color:#57606a; text-transform: uppercase; }
+    .v { font-size: 14px; font-weight: 600; margin-top: 4px; }
+    .ok { color:#1a7f37; } .warn { color:#9a6700; } .bad { color:#cf222e; }
+    table { width:100%; border-collapse: collapse; margin-top: 12px; }
+    th, td { border:1px solid #d0d7de; padding: 8px; font-size: 12px; }
+    th { background:#f6f8fa; text-align:left; }
+    .footer { margin-top: 20px; font-size: 11px; color:#57606a; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div>
+      <div class="title">Reporte Remoto Agregado</div>
+      <div class="sub">SLA Colonial · Webasto UNITE · Formato estricto v1</div>
+    </div>
+    <div class="sub">{{ report.report_date_cest }}</div>
+  </div>
+
+  <div class="grid">
+    <div class="card"><div class="k">Ticket</div><div class="v">{{ report.ticket_id }}</div></div>
+    <div class="card"><div class="k">Cargador</div><div class="v">{{ report.charger_id }} · {{ report.charger_ip }}</div></div>
+    <div class="card"><div class="k">Sitio</div><div class="v">{{ report.site_name }}</div></div>
+    <div class="card"><div class="k">Criticidad</div><div class="v">{{ report.criticity }}</div></div>
+  </div>
+
+  <table>
+    <tr><th>Indicador</th><th>Valor</th></tr>
+    <tr><td>Endpoint antes</td><td>{{ report.endpoint_before }}</td></tr>
+    <tr><td>Endpoint objetivo</td><td>{{ report.endpoint_target }}</td></tr>
+    <tr><td>Endpoint actual</td><td>{{ report.endpoint_after }}</td></tr>
+    <tr><td>Guardado persistido</td><td>{{ "SI" if report.endpoint_saved else "NO" }}</td></tr>
+    <tr><td>Última carga (CEST)</td><td>{{ report.last_charge_at_cest }}</td></tr>
+    <tr><td>Duración última carga</td><td>{{ report.last_charge_duration }}</td></tr>
+    <tr><td>idTag</td><td>{{ report.idtag_used }}</td></tr>
+    <tr><td>Modo Free</td><td>{{ "SI" if report.free_mode_detected else "NO" }}</td></tr>
+    <tr><td>Resultado de carga</td><td>{{ report.charge_result }}</td></tr>
+  </table>
+
+  <table>
+    <tr><th>Métrica 7d</th><th>Valor</th></tr>
+    <tr><td>Sesiones totales</td><td>{{ report.sessions_total_7d }}</td></tr>
+    <tr><td>Sesiones correctas</td><td>{{ report.sessions_ok_7d }}</td></tr>
+    <tr><td>Failed starts</td><td>{{ report.failed_starts_7d }}</td></tr>
+    <tr><td>Interrupciones</td><td>{{ report.interruptions_7d }}</td></tr>
+  </table>
+
+  <div class="footer">Analista: {{ report.analyst_name }} · Generado automáticamente con protocolo Python estricto.</div>
+</body>
+</html>

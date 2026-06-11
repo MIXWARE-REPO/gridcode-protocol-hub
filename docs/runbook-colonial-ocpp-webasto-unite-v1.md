@@ -86,6 +86,55 @@ Regla crítica:
 - Prohibido cerrar caso sin verificar persistencia real del endpoint.
 - Prohibido declarar fallo de logs solo por timeout visual del navegador.
 - Prohibido alterar estética/estructura de plantillas de reporte aprobadas.
+- Prohibido ejecutar acciones sobre un cargador sin haberlo identificado primero en la base de registro Supabase.
+
+## Identificación previa del cargador en Supabase
+Fuente canónica de registro:
+- `website/docs/reference/supabase-charger-registry-schema.sql`
+
+Regla de identificación:
+- 1 dato disponible: se verifica ese dato.
+- 2 datos disponibles: se confrontan y deben coincidir.
+- Si la identificación no es unívoca, se bloquea la acción y se pide el dato mínimo faltante.
+
+## Paso intermedio obligatorio: determinar la red de conexión
+Antes de tocar la UI del cargador hay que clasificar su IP:
+- `10.x.x.x` → red COLONIAL, requiere VPN.
+- `192.168.31.x` → red de laboratorio, acceso directo en la LAN local.
+
+Checklist corta del agente:
+- `docs/webasto-unite-agent-checklist.md`
+- `docs/webasto-unite-input-contract.md`
+
+### Mini tabla de decisión
+| IP / dato | Red | Conexión | Skill / camino |
+|---|---|---|---|
+| `10.x.x.x` | COLONIAL | Indirecta vía VPN | `colonial-vpn-charger-access` → conectar a VPN → luego runner Playwright |
+| `192.168.31.x` | Laboratorio | Directa en LAN | runner Playwright directo |
+| `1 dato` | — | Verificar ese dato | Si identifica unívocamente, continuar |
+| `2 datos` | — | Confrontar ambos | Deben coincidir antes de actuar |
+
+Skill de conexión a COLONIAL:
+- Nombre: `colonial-vpn-charger-access`
+- Ruta: `productivity/colonial-vpn-charger-access/SKILL.md`
+- Propósito: conexión operativa a VPN Colonial (Saiwall/OpenVPN + MFA) y validación de acceso web a cargadores por IP interna.
+
+Flujo obligatorio antes de cualquier acción:
+1. Verificar el cargador en Supabase.
+2. Individualizarlo por plaza, serie, ID Colonial o IP según corresponda.
+3. Clasificar la IP para decidir si la conexión es directa (laboratorio) o indirecta vía VPN (COLONIAL).
+4. Elegir el protocolo/script Playwright específico de la acción.
+5. Ejecutar solo el runner correspondiente.
+
+Mapa de acciones:
+- Cambio de ID → runner específico de ID.
+- Cambio de endpoint OCPP → runner específico de OCPP.
+- Descarga de log de eventos → runner específico de logs.
+- Actualización de firmware → fuera del happy path hasta existir runner dedicado.
+
+Regla de ejecución:
+- Los primeros 3 casos ya deben resolverse por script + Playwright.
+- Snapshots solo como fallback documentado de diagnóstico o drift, nunca como camino habitual.
 
 ## Salida humana esperada
 Resumen ejecutivo por cargador:

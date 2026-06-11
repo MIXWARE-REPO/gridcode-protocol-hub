@@ -2,10 +2,29 @@ from __future__ import annotations
 
 import json
 import re
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
+
+
+# SELECTORES FIJOS (UI estática Webasto/Unite)
+# Nota: la UI real no expone snapshots ni APIs fiables para navegación;
+# usamos selectores deterministas y visibles.
+SEL_USERNAME = 'input[type="text"]'
+SEL_PASSWORD = 'input[type="password"]'
+SEL_LOGIN = 'input#button_login, input[type="submit"]#button_login, button#button_login'
+SEL_BACKEND_MENU = 'button:has-text("Backend")'
+SEL_OCPP_MENU = 'a:has-text("OCPP Settings")'
+SEL_SYSTEM_MENU = 'a#systemNav, a:has-text("System Maintenance")'
+SEL_GENERAL_TAB = 'a:has-text("General")'
+SEL_DOWNLOAD_LOGS = 'button:has-text("Download Log Files")'
+SEL_OCPP_LOG_BUTTON = '#ocpp_log_button'
+SEL_HMI_LOG_BUTTON = '#hmi_log_button'
+SEL_CENTRAL_SYSTEM = 'input[name="centralSystemAddress"]:visible, input#centralSystemAddress[name="centralSystemAddress"]:visible'
+SEL_CHARGE_POINT_ID = 'input[name="chargePointId"]:visible, input#chargePointId[name="chargePointId"]:visible'
+SEL_SAVE_OCPP = 'button:has-text("SAVE"):visible, button:has-text("Save"):visible'
+SEL_FREE_MODE_ACTIVE = 'select#freeChargeModeActive[name="freeChargeModeActive"]'
 
 
 @dataclass
@@ -15,7 +34,7 @@ class ChargerRunConfig:
     password: str = ""
     target_endpoint: Optional[str] = None
     ocpp_updates: Optional[Dict[str, str]] = None
-    download_logs: bool = True
+    download_logs: bool = False
     reboot: bool = False
     timeout_ms: int = 30000
     headless: bool = True
@@ -49,11 +68,35 @@ class ChargerPlaywrightExecutor:
         m = re.search(r'name=["\']centralSystemAddress["\'][^>]*value=["\']([^"\']*)["\']', html, re.I)
         if m:
             endpoint = m.group(1).strip()
-        mode = None
-        mode_m = re.search(r'name=["\']selectOCPPConnection["\'][^>]*>.*?<option[^>]*selected[^>]*value=["\']([^"\']+)', html, re.I | re.S)
-        if mode_m:
-            mode = mode_m.group(1)
-        return {"centralSystemAddress": endpoint, "selectOCPPConnection": mode}
+        return {"centralSystemAddress": endpoint}
+
+    def _download_logs_archive(self, page, download_url: str, target_name: str) -> str:
+        """Navigate to a log download endpoint and persist the resulting archive.
+
+        Webasto Unite uses long-running generation before the browser receives the
+        file. The UI may take several minutes, so this helper must tolerate long
+        waits and treat `Download is starting` as a successful transition.
+        """
+        with page.expect_download(timeout=self.config.timeout_ms) as download_info:
+            try:
+                page.goto(download_url, wait_until="load", timeout=self.config.timeout_ms)
+            except Exception as e:
+                if "Download is starting" not in str(e):
+                    raise
+        download = download_info.value
+        target = self.evidence_dir / self._safe_filename(target_name)
+        download.save_as(str(target))
+        return str(target)
+
+    def _login(self, page) -> None:
+        page.goto(self._base_url() + "/", wait_until="domcontentloaded")
+        page.wait_for_selector(SEL_USERNAME, state="visible", timeout=self.config.timeout_ms)
+        page.locator(SEL_USERNAME).first.fill(self.config.username)
+        page.wait_for_selector(SEL_PASSWORD, state="visible", timeout=self.config.timeout_ms)
+        page.locator(SEL_PASSWORD).first.fill(self.config.password)
+        page.locator(SEL_LOGIN).first.click(timeout=self.config.timeout_ms)
+        page.wait_for_load_state("domcontentloaded")
+        page.wait_for_timeout(1500)
 
     def _build_result_base(self) -> Dict[str, Any]:
         return {
@@ -73,7 +116,7 @@ class ChargerPlaywrightExecutor:
         try:
             from playwright.sync_api import sync_playwright
         except Exception as e:
-            result["errors"].append(f"playwright_import_error: {e}")
+            result["errors"].append(f"playwright_import_error:{e}")
             result["finished_at"] = self._now_iso()
             result["ok"] = False
             return result
@@ -85,88 +128,97 @@ class ChargerPlaywrightExecutor:
             page.set_default_timeout(self.config.timeout_ms)
 
             try:
-                # Login
-                page.goto(self._base_url() + "/")
-                page.fill('input[name="username"]', self.config.username)
-                page.fill('input[name="pass"]', self.config.password)
-                page.click('input[name="button_login"], button[name="button_login"], input[type="submit"]')
-                page.wait_for_timeout(1000)
+                # 1) Login
+                self._login(page)
                 result["actions"].append("login")
 
-                login_shot = str(self.evidence_dir / "01_after_login.png")
-                page.screenshot(path=login_shot, full_page=True)
-                result["evidence"]["screenshots"].append(login_shot)
+                # 2) Ir a OCPP Settings si todavía no está visible
+                if page.locator(SEL_CENTRAL_SYSTEM).count() == 0:
+                    if page.locator('a#ocppNav').count() > 0:
+                        page.click('a#ocppNav')
+                        page.wait_for_timeout(700)
+                        result["actions"].append("open_ocpp_settings_tab")
+                    elif page.locator(SEL_OCPP_MENU).count() > 0:
+                        page.click(SEL_OCPP_MENU)
+                        page.wait_for_timeout(700)
+                        result["actions"].append("open_ocpp_settings")
+                    elif page.locator(SEL_BACKEND_MENU).count() > 0:
+                        page.click(SEL_BACKEND_MENU)
+                        page.wait_for_timeout(700)
+                        result["actions"].append("open_backend_menu")
 
-                html_main = page.content()
-                html_path = self._save_text("01_main_after_login.html", html_main)
-                result["evidence"]["html"].append(html_path)
-
-                before_snapshot = self._extract_ocpp_snapshot(html_main)
-                result["ocpp_before"] = before_snapshot
-
-                # Update OCPP endpoint + variables
-                if self.config.target_endpoint or self.config.ocpp_updates:
-                    result["actions"].append("update_ocpp")
-
-                    # Endpoint field
-                    if self.config.target_endpoint:
-                        endpoint_input = page.locator('input[name="centralSystemAddress"], #centralSystemAddress').first
-                        endpoint_input.fill(self.config.target_endpoint)
-
-                    # Arbitrary variable updates by name
-                    for key, value in (self.config.ocpp_updates or {}).items():
-                        loc = page.locator(f'[name="{key}"]').first
-                        if loc.count() == 0:
-                            result["warnings"].append(f"ocpp_var_not_found:{key}")
-                            continue
-                        tag = loc.evaluate("el => el.tagName.toLowerCase()")
-                        if tag == "select":
-                            loc.select_option(value=str(value))
-                        else:
-                            loc.fill(str(value))
-
-                    # save
-                    save_btn = page.locator('#ocpp_button, button[name="ocpp_button"], button:has-text("Save"), input[name="ocpp_button"]').first
-                    save_btn.click()
-                    page.wait_for_timeout(1500)
-
-                # Read after
-                html_after = page.content()
-                after_path = self._save_text("02_main_after_update.html", html_after)
-                result["evidence"]["html"].append(after_path)
-                result["ocpp_after"] = self._extract_ocpp_snapshot(html_after)
-
-                # Download logs
-                if self.config.download_logs:
-                    result["actions"].append("download_ocpp_logs")
-                    with page.expect_download(timeout=self.config.timeout_ms) as download_info:
-                        # preferred direct endpoint (works on UNITE when authenticated)
-                        page.goto(self._base_url() + "/downloadOcppLogs.php")
-                    download = download_info.value
-                    suggested = download.suggested_filename or f"OCPP_logs_{self.config.ip}.zip"
-                    logs_path = self.out_dir / self._safe_filename(suggested)
-                    download.save_as(str(logs_path))
-                    result["evidence"]["downloads"].append(str(logs_path))
-
-                # Reboot (unsafe)
-                if self.config.reboot:
-                    if not self.config.allow_unsafe_actions:
-                        result["warnings"].append("reboot_requested_but_blocked_without_allow_unsafe_actions")
+                if page.locator(SEL_CENTRAL_SYSTEM).count() == 0:
+                    html = page.content()
+                    if "User authentication failed" in html:
+                        result["errors"].append("auth_failed")
                     else:
-                        result["actions"].append("reboot")
-                        reboot_btn = page.locator('button:has-text("Reboot"), input[value="Reboot"], #reboot_button').first
-                        if reboot_btn.count() > 0:
-                            reboot_btn.click()
-                            page.wait_for_timeout(1500)
-                        else:
-                            result["warnings"].append("reboot_button_not_found")
+                        result["errors"].append("post_login_ocpp_menu_not_found")
+                    return result
 
-                final_shot = str(self.evidence_dir / "99_final_state.png")
-                page.screenshot(path=final_shot, full_page=True)
-                result["evidence"]["screenshots"].append(final_shot)
+                # 3) Snapshot before
+                html_before = page.content()
+                result["ocpp_before"] = self._extract_ocpp_snapshot(html_before)
+                result["evidence"]["html"].append(self._save_text("01_ocpp_before.html", html_before))
+
+                # 4) Update endpoint
+                if self.config.target_endpoint:
+                    page.locator(SEL_CENTRAL_SYSTEM).first.fill(self.config.target_endpoint)
+
+                # 5) Update vars (solo select/text existentes)
+                for key, value in (self.config.ocpp_updates or {}).items():
+                    loc = page.locator(f'[name="{key}"]')
+                    if loc.count() == 0:
+                        result["warnings"].append(f"ocpp_var_not_found:{key}")
+                        continue
+                    tag = loc.first.evaluate("el => el.tagName.toLowerCase()")
+                    if tag == "select":
+                        loc.first.select_option(value=str(value))
+                    else:
+                        loc.first.fill(str(value))
+
+                # 6) Save
+                page.locator(SEL_SAVE_OCPP).first.click(timeout=self.config.timeout_ms)
+                page.wait_for_timeout(1200)
+                result["actions"].append("save_ocpp")
+
+                # 7) Relectura persistida (ir Main y volver a OCPP)
+                page.locator('a:has-text("Main Page")').first.click(timeout=self.config.timeout_ms)
+                page.wait_for_timeout(500)
+                if page.locator('a#ocppNav').count() > 0:
+                    page.locator('a#ocppNav').first.click(timeout=self.config.timeout_ms)
+                else:
+                    page.locator(SEL_OCPP_MENU).first.click(timeout=self.config.timeout_ms)
+                page.wait_for_timeout(700)
+                result["actions"].append("reopen_ocpp_for_persistence_check")
+
+                html_after = page.content()
+                result["ocpp_after"] = self._extract_ocpp_snapshot(html_after)
+                result["evidence"]["html"].append(self._save_text("02_ocpp_after.html", html_after))
+
+                s = str(self.evidence_dir / "99_final_state.png")
+                page.screenshot(path=s, full_page=True)
+                result["evidence"]["screenshots"].append(s)
+
+                if self.config.download_logs:
+                    page.evaluate("document.body.style.zoom='50%'")
+                    page.locator(SEL_SYSTEM_MENU).first.click(timeout=self.config.timeout_ms)
+                    page.wait_for_timeout(700)
+                    if page.locator(SEL_GENERAL_TAB).count() > 0:
+                        page.locator(SEL_GENERAL_TAB).first.click(timeout=self.config.timeout_ms)
+                        page.wait_for_timeout(500)
+                    downloaded = self._download_logs_archive(
+                        page,
+                        f"{self._base_url()}/downloadOcppLogs.php",
+                        "OCPP_logs.zip",
+                    )
+                    result["evidence"]["downloads"].append(downloaded)
+                    result["actions"].append("download_ocpp_logs")
+
+                if self.config.target_endpoint and result["ocpp_after"].get("centralSystemAddress") != self.config.target_endpoint:
+                    result["errors"].append("persistence_check_failed_endpoint_mismatch")
 
             except Exception as e:
-                result["errors"].append(f"runtime_error: {e}")
+                result["errors"].append(f"runtime_error:{e}")
             finally:
                 context.close()
                 browser.close()
@@ -177,8 +229,7 @@ class ChargerPlaywrightExecutor:
 
 
 def run_playwright_session(config: ChargerRunConfig, out_dir: Path) -> Dict[str, Any]:
-    runner = ChargerPlaywrightExecutor(config=config, out_dir=out_dir)
-    return runner.run()
+    return ChargerPlaywrightExecutor(config=config, out_dir=out_dir).run()
 
 
 def save_run_json(result: Dict[str, Any], out_path: Path) -> Path:

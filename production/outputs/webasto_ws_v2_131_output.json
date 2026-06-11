@@ -1,0 +1,39 @@
+{
+  "version": "webasto_unite_strict_playwright_v1",
+  "status": "error",
+  "started_at": "2026-05-26T16:36:14.001695+00:00",
+  "ended_at": "2026-05-26T16:36:17.743266+00:00",
+  "run_id": "webasto-prod-v2-131",
+  "charger": {
+    "label": "Plaza-131",
+    "ip": "192.168.31.131"
+  },
+  "applied": {
+    "ocpp_endpoint": "ws://v2.testing.grid-code.tech/ocpp",
+    "free_charge_mode_active": false,
+    "set_static_network_requested": false,
+    "static_network": {
+      "static_ip": null,
+      "netmask": "255.255.255.0",
+      "gateway": null,
+      "dns_primary": "8.8.8.8"
+    },
+    "do_soft_reset_requested": false,
+    "do_hard_reset_requested": false
+  },
+  "result": {
+    "actions": [],
+    "warnings": [],
+    "errors": [
+      "runtime_error:Page.goto: net::ERR_ADDRESS_UNREACHABLE at http://192.168.31.131/\nCall log:\n  - navigating to \"http://192.168.31.131/\", waiting until \"load\"\n"
+    ],
+    "ocpp_before": {},
+    "ocpp_after": {}
+  },
+  "artifacts": {
+    "run_dir": "/home/laia/gridcode-protocol-hub/out/webasto-unite-runs/20260526_173614_webasto-prod-v2-131_Plaza-131_192_168_31_131",
+    "webui_result_json": "/home/laia/gridcode-protocol-hub/out/webasto-unite-runs/20260526_173614_webasto-prod-v2-131_Plaza-131_192_168_31_131/01_webui_result.json",
+    "downloads": [],
+    "screenshots": []
+  }
+}

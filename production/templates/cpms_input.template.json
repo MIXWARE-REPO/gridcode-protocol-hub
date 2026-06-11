@@ -1,0 +1,10 @@
+{
+  "base_url": "https://wings.grid-code.tech",
+  "username": "admin",
+  "password": "REEMPLAZAR",
+  "charger_name": "AC-Monofasico-142",
+  "charger_id": "142",
+  "charger_type": "AC",
+  "phase": "Single-Phase",
+  "headless": true
+}

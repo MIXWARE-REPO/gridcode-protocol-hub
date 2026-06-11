@@ -1,0 +1,35 @@
+{
+  "run_id": "wu-cpms-v2-demo",
+  "headless": true,
+  "charger": {
+    "ip": "192.168.31.138",
+    "username": "sanmin",
+    "password": "REEMPLAZAR_PASSWORD",
+    "ocpp_endpoint": "192.168.31.166:2880",
+    "free_charge_mode_active": false,
+    "download_logs": true,
+    "download_wait_seconds": 240,
+    "hard_reset": false
+  },
+  "cpms": {
+    "base_url": "http://grid-code-1.local",
+    "username": "admin",
+    "password": "1234",
+    "expected_instance_ip": "192.168.31.166",
+    "create_charger": true,
+    "charger_id": "142",
+    "charger_name": "Laia-demo-142",
+    "connector_count": 1,
+    "ocpp_version": "1.6",
+    "priority": "High",
+    "auth_mode": "backend_cloud",
+    "create_user": true,
+    "user_full_name": "Laia Botardo Gentile",
+    "user_username": "laia",
+    "user_password": "123456",
+    "user_tag_id": "REEMPLAZAR_RFID",
+    "user_company": "Grid Code",
+    "user_priority": "High",
+    "user_role": "user"
+  }
+}

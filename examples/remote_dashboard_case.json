@@ -1,0 +1,22 @@
+{
+  "ticket_id": "LAB-TEST-20260507-001",
+  "charger_id": "LAB-192.168.31.138",
+  "charger_ip": "192.168.31.138",
+  "site_name": "Laboratorio",
+  "endpoint_before": "ws://192.168.31.165/ws/ocpp",
+  "endpoint_target": "ws://192.168.31.165/ws/ocpp",
+  "endpoint_after": "ws://192.168.31.165/ws/ocpp",
+  "endpoint_saved": true,
+  "last_charge_at_cest": "2026-05-05 14:56:49 CEST",
+  "last_charge_duration": "00:19:40",
+  "idtag_used": "#freecharging",
+  "free_mode_detected": true,
+  "charge_result": "Sesión registrada; validación backend no aceptada (Invalid)",
+  "sessions_total_7d": 1,
+  "sessions_ok_7d": 0,
+  "failed_starts_7d": 0,
+  "interruptions_7d": 0,
+  "criticity": "seguimiento",
+  "analyst_name": "Laia",
+  "report_date_cest": "2026-05-07 12:15 CEST"
+}

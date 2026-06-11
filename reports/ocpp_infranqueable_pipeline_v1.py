@@ -83,7 +83,10 @@ def analyze(metadata: Dict[str, Any], events_raw: List[Dict[str, Any]]) -> Dict[
         rows = day_map.get(d.date().isoformat(), [])
         day_starts = [x for x in rows if x.message_type in {"StartTransaction", "TransactionEvent.Start"}]
         day_stops = [x for x in rows if x.message_type in {"StopTransaction", "TransactionEvent.End"}]
-        if len(day_starts) == 0:
+        if len(rows) == 0:
+            tipo = "Sin evidencia suficiente"
+            count = None
+        elif len(day_starts) == 0:
             tipo = "Sin carga registrada"
             count = None
         elif len(day_stops) >= len(day_starts):

@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>{{ report_title or 'Informe Técnico' }}</title>
+<style>
+  @page {
+    size: A4 portrait;
+    margin-top: 40mm;
+    margin-right: 0;
+    margin-bottom: 28mm;
+    margin-left: 0;
+    background: #001518;
+    @top-center {
+      content: element(page-header);
+      width: 100%;
+    }
+    @bottom-center {
+      content: element(page-footer);
+      width: 100%;
+    }
+  }
+
+@font-face {
+    font-family: 'MontserratAlt1';
+    src: url('file:///home/laia/gritco-skill-factory/charger-service/templates/_base/fonts/MontserratAlt1-ExtraBold.woff2') format('woff2');
+    font-weight: 800; font-style: normal; font-display: block;
+}
+@font-face {
+    font-family: 'MontserratAlt1';
+    src: url('file:///home/laia/gritco-skill-factory/charger-service/templates/_base/fonts/MontserratAlt1-Bold.woff2') format('woff2');
+    font-weight: 700; font-style: normal; font-display: block;
+}
+@font-face {
+    font-family: 'MontserratAlt1';
+    src: url('file:///home/laia/gritco-skill-factory/charger-service/templates/_base/fonts/MontserratAlt1-SemiBold.woff2') format('woff2');
+    font-weight: 600; font-style: normal; font-display: block;
+}
+@font-face {
+    font-family: 'MontserratAlt1';
+    src: url('file:///home/laia/gritco-skill-factory/charger-service/templates/_base/fonts/MontserratAlt1-Regular.woff2') format('woff2');
+    font-weight: 400; font-style: normal; font-display: block;
+}
+@font-face {
+    font-family: 'MontserratAlt1';
+    src: url('file:///home/laia/gritco-skill-factory/charger-service/templates/_base/fonts/MontserratAlt1-Light.woff2') format('woff2');
+    font-weight: 300; font-style: normal; font-display: block;
+}
+
+  :root {
+    --gc-bg: #001518;
+    --gc-deep: #00272c;
+    --gc-deep-2: #073940;
+    --gc-cyan: #169dae;
+    --gc-cyan-bright: #2afcd6;
+    --gc-cyan-soft: #1fd9f0;
+    --gc-white: #ffffff;
+    --gc-muted: #91a6b1;
+    --gc-text: #d4eaef;
+    --gc-border: rgba(42,252,214,0.18);
+    --gc-border-soft: rgba(255,255,255,0.12);
+    --font-main: DejaVu Sans, Liberation Sans, Arial, sans-serif;
+    --header-h: 30mm;
+    --footer-h: 20mm;
+    --side-pad: 12mm;
+    --body-side-pad: 16mm;
+  }
+
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: #001518;
+    color: var(--gc-white);
+    font-family: var(--font-main);
+    -webkit-font-smoothing: antialiased;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  body {
+    position: relative;
+  }
+
+  .page-bg, .top-accent, .page-mask {
+    display: none !important;
+  }
+
+  /* No footer duplicado dentro del flujo principal cuando existe footer paginado. */
+  .footer-note {
+    display: none !important;
+  }
+
+  /* NO FLOAT: header y footer deben ocupar espacio real en el flujo del documento.
+     No usar position: fixed, absolute ni sticky en estos bloques. */
+  .header {
+    position: running(page-header);
+    width: 100%;
+    height: 28mm;
+    padding: 0 14mm;
+    background: rgba(0,39,44,0.92);
+    border-bottom: 1px solid var(--gc-border);
+    display: flex;
+    align-items: stretch;
+    box-sizing: border-box;
+  }
+  .header,
+  .footer-fixed {
+    top: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+  }
+
+  .brand-block {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1 1 auto;
+    min-width: 0;
+    justify-content: flex-start;
+  }
+  .logo-mark {
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 38px;
+    align-self: center;
+  }
+  .logo-img {
+    width: 38px;
+    height: 38px;
+    object-fit: contain;
+    opacity: .96;
+    display: block;
+  }
+  .brand-name {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 41mm;
+    max-width: 41mm;
+    min-width: 41mm;
+  }
+  .brand-wordmark {
+    font-family: 'MontserratAlt1', Arial, sans-serif;
+    font-weight: 700;
+    font-size: 17pt;
+    letter-spacing: .03em;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+  }
+  .brand-tagline {
+    font-size: 4.6pt;
+    font-weight: 400;
+    color: rgba(31,217,240,.50);
+    letter-spacing: .10em;
+    text-transform: uppercase;
+    margin-top: 2px;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+  }
+  .meta-block {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 5px;
+    min-width: 215px;
+    flex: 0 0 215px;
+    border-left: 1px solid var(--gc-border-soft);
+    padding-left: 14px;
+    margin-left: 14px;
+  }
+  .doc-code-badge {
+    display: inline-flex; align-items: center;
+    background: rgba(42,252,214,.10);
+    border: 1px solid rgba(42,252,214,.25);
+    border-radius: 6px;
+    padding: 4px 12px;
+    font-family: Consolas, monospace;
+    font-size: 8.5pt;
+    color: var(--gc-cyan-bright);
+    letter-spacing: .04em;
+    white-space: nowrap;
+    margin-bottom: 3px;
+  }
+  .meta-row {
+    display: flex;
+    gap: 8px;
+    align-items: baseline;
+    justify-content: flex-start;
+    width: 100%;
+    white-space: nowrap;
+  }
+  .meta-label { font-size: 5.5pt; color: var(--gc-muted); text-transform: uppercase; letter-spacing: .12em; white-space: nowrap; flex: 0 0 auto; }
+  .meta-value { font-weight: 600; font-size: 6.5pt; color: var(--gc-cyan-soft); white-space: nowrap; flex: 0 0 auto; }
+  .doc-code-badge {
+    display: inline-flex; align-items: center;
+    background: rgba(42,252,214,.10);
+    border: 1px solid rgba(42,252,214,.25);
+    border-radius: 6px;
+    padding: 4px 12px;
+    font-family: Consolas, monospace;
+    font-size: 8.5pt;
+    color: var(--gc-cyan-bright);
+    letter-spacing: .04em;
+    white-space: nowrap;
+  }
+
+  .body-shell {
+    position: relative;
+    z-index: 1;
+    padding: 2mm 0 0 0;
+    background: transparent;
+  }
+
+  .content-frame {
+    min-height: auto;
+    display: block;
+  }
+
+  .addressed-banner {
+    border-bottom: 1px solid rgba(22,157,174,.20);
+    padding: 0 var(--body-side-pad) 8px var(--body-side-pad);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 1mm;
+  }
+  .addressed-label { font-size: 7.5pt; color: var(--gc-muted); text-transform: uppercase; letter-spacing: .1em; white-space: nowrap; }
+  .addressed-value { font-size: 9.5pt; color: var(--gc-white); font-weight: 400; }
+
+  .case-title-section {
+    padding: 4mm var(--body-side-pad) 4mm calc(var(--body-side-pad) + 10mm);
+    border-bottom: 1px solid var(--gc-border);
+    margin-bottom: 2mm;
+    position: relative;
+  }
+  .case-title-section::before {
+    content: '';
+    position: absolute;
+    left: var(--body-side-pad); top: 0; bottom: 0;
+    width: 4px;
+    background: linear-gradient(180deg, var(--gc-cyan-bright) 0%, var(--gc-cyan) 100%);
+  }
+  .case-type-label { font-size: 8pt; color: var(--gc-cyan-bright); letter-spacing: .18em; text-transform: uppercase; margin-bottom: 7px; display: flex; align-items: center; gap: 8px; }
+  .case-type-label::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, var(--gc-border) 0%, transparent 100%); }
+  .case-title { font-weight: 800; font-size: 15.4pt; color: var(--gc-white); line-height: 1.18; letter-spacing: .005em; max-width: 88%; margin: 0; }
+  .case-title .highlight { color: var(--gc-cyan-bright); }
+  .case-subtitle { margin-top: 8px; font-size: 9.2pt; color: var(--gc-muted); font-weight: 300; max-width: 82%; line-height: 1.45; }
+
+  .main-flow {
+    display: block;
+    padding: 0 var(--body-side-pad);
+  }
+
+  .body-content {
+    color: var(--gc-text);
+    margin: 0;
+    padding: 0;
+    max-width: none;
+  }
+  .body-content h2 {
+    color: var(--gc-cyan-soft);
+    line-height: 1.2;
+    page-break-after: avoid;
+    break-after: avoid;
+    font-size: 12pt;
+    font-weight: 700;
+    margin: 14px 0 7px;
+  }
+  .body-content p { margin: 0 0 8px; font-size: 10.1pt; line-height: 1.52; color: var(--gc-text); }
+  .body-content ul, .body-content ol { margin: 7px 0 10px 20px; color: var(--gc-text); }
+  .body-content li { margin-bottom: 4px; font-size: 10pt; line-height: 1.45; }
+  .body-content li::marker { color: var(--gc-cyan-bright); }
+  .body-content strong { color: var(--gc-white); font-weight: 700; }
+  .body-content code { font-family: Consolas, monospace; font-size: 8.6pt; background: rgba(42,252,214,.10); border: 1px solid rgba(42,252,214,.20); border-radius: 3px; padding: 1px 5px; color: var(--gc-cyan-bright); }
+  .body-content blockquote { border-left: 3px solid var(--gc-cyan); padding: 8px 13px; margin: 10px 0; background: rgba(22,157,174,.08); border-radius: 0 6px 6px 0; color: var(--gc-muted); }
+  .body-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0 12px;
+    font-size: 8.3pt;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  .body-content th { background: rgba(22,157,174,.15); color: var(--gc-cyan-soft); font-weight: 700; padding: 5px 7px; text-align: left; border: 1px solid var(--gc-border); }
+  .body-content td { padding: 5px 7px; border: 1px solid rgba(255,255,255,.07); color: var(--gc-text); vertical-align: top; }
+  .body-content tr:nth-child(even) td { background: rgba(255,255,255,.03); }
+  .report-block { margin-bottom: 8px; }
+  .report-block.break { break-before: auto; page-break-before: auto; }
+  .compact p, .compact li { font-size: 9.6pt; line-height: 1.4; }
+
+  .signature-section {
+    margin-top: 6px;
+    padding-top: 8px;
+    border-top: 1px solid var(--gc-border);
+    display: flex;
+    justify-content: flex-end;
+    background: rgba(0,39,44,.14);
+  }
+  .sig-block { display: flex; flex-direction: column; gap: 6px; width: 220px; }
+  .sig-header { font-size: 7pt; color: var(--gc-muted); text-transform: uppercase; letter-spacing: .12em; }
+  .sig-line-long { height: 30px; border-bottom: 1px solid rgba(255,255,255,.22); }
+  .sig-name { font-weight: 600; font-size: 9.5pt; color: var(--gc-white); }
+  .sig-role, .sig-date { font-size: 8pt; color: var(--gc-muted); }
+
+  .footer-note {
+    margin-top: 6px;
+    color: var(--gc-muted);
+    font-size: 8pt;
+    border-top: 1px solid var(--gc-border);
+    padding-top: 6px;
+  }
+
+  .footer-fixed {
+    position: running(page-footer);
+    width: 100%;
+    height: 18mm;
+    padding: 5mm 14mm;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(0,39,44,.86);
+    border-top: 1px solid var(--gc-border);
+    box-sizing: border-box;
+  }
+  .footer-text { font-size: 6.5pt; color: var(--gc-muted); line-height: 1.35; }
+  .footer-text span { color: var(--gc-cyan); font-family: 'MontserratAlt1', Arial, sans-serif; font-weight: 700; letter-spacing: .04em; }
+  .footer-right { font-size: 6.5pt; color: var(--gc-muted); text-align: right; line-height: 1.45; }
+  .page-number::after { content: counter(page) " / " counter(pages); color: var(--gc-cyan-soft); }
+
+  .page-mask {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 0;
+    background: radial-gradient(circle at top right, rgba(22,157,174,0.12) 0%, transparent 30%),
+                radial-gradient(circle at bottom left, rgba(42,252,214,0.07) 0%, transparent 26%);
+  }
+</style>
+</head>
+<body>
+  <!--
+  GRIDCODE DOCUMENT TEMPLATE — CANONICAL BASE
+  Do not modify header/footer/page system unless intentionally changing the corporate document standard.
+  Only body-shell/content-frame/body-content are intended for document-specific content.
+  Header metadata may vary only by report_code, report_date and author_department.
+  -->
+  <div class="page-bg"></div>
+  <div class="top-accent"></div>
+  <div class="page-mask"></div>
+
+  <!-- HEADER GRIDCODE — FIXED CORPORATE STYLE / RUNNING ELEMENT -->
+  <header class="header">
+    <div class="brand-block">
+      <div class="logo-mark"><img src="file:///home/laia/gridcode-protocol-hub/gridcode-source-base/logo.png" alt="Grid Code" class="logo-img"></div>
+      <div class="brand-name">
+        <span class="brand-wordmark">GRIDCODE</span>
+        <span class="brand-tagline">Transición Energética</span>
+      </div>
+    </div>
+    <!-- HEADER METADATA — DYNAMIC VALUES ONLY: report_code, report_date, author_department -->
+    <div class="meta-block">
+      <div class="doc-code-badge">{{ report_code or 'IAP-GC-20260609-RE01' }}</div>
+      <div class="meta-row"><span class="meta-label">Fecha</span><span class="meta-value">{{ report_date or '9 June 2026' }}</span></div>
+      <div class="meta-row"><span class="meta-label">Autor</span><span class="meta-value">{{ author_department or author or 'Departamento Técnico' }}</span></div>
+    </div>
+  </header>
+
+  <!-- FOOTER GRIDCODE — FIXED CORPORATE STYLE / RUNNING ELEMENT -->
+  <footer class="footer-fixed">
+    <div class="footer-text">
+      <span>GRIDCODE</span> · grid-code.tech<br>
+      {{ footer_text or 'Documento confidencial · Uso interno y destinatarios autorizados · Protección de datos UE' }}
+    </div>
+    <div class="footer-right">
+      Grid Code · Transición Energética<br>
+      Página <span class="page-number"></span>
+    </div>
+  </footer>
+
+  <!-- BODY CONTENT — ONLY VARIABLE DOCUMENT AREA -->
+  <div class="body-shell">
+    <div class="content-frame">
+      <div class="addressed-banner">
+        <span class="addressed-label">Proyecto</span>
+        <span class="addressed-value">{{ project_name or 'Hidrica Group' }}</span>
+      </div>
+
+      <section class="case-title-section">
+        <div class="case-type-label">{{ case_type or 'Informe técnico' }}</div>
+        <h1 class="case-title">{{ report_title_prefix or 'Informe técnico de análisis de oscilación DLM por entrada simultánea de cargadores — ' }}<span class="highlight">{{ report_title_highlight or 'Hidrica Group' }}</span></h1>
+        <p class="case-subtitle">{{ report_subtitle or 'Basado en el reporte técnico estándar cargado por el usuario' }}</p>
+      </section>
+
+      <main class="main-flow">
+        <div class="body-content">
+          {{ body_content | safe if body_content else '' }}
+        </div>
+        {% if signature_name or signature_role or signature_date %}
+        <section class="signature-section">
+          <div class="sig-block">
+            <div class="sig-header">Firma / validación</div>
+            <div class="sig-line-long"></div>
+            <div class="sig-name">{{ signature_name or 'Departamento Técnico Grid-Code' }}</div>
+            <div class="sig-role">{{ signature_role or '' }}</div>
+            <div class="sig-date">{{ signature_date or '' }}</div>
+          </div>
+        </section>
+        {% endif %}
+      </main>
+    </div>
+  </div>
+</body>
+</html>
