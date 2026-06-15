@@ -192,8 +192,15 @@
     color: var(--gc-cyan-bright);
     letter-spacing: .04em;
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: clip;
+    max-width: 24mm;
     margin-bottom: 3px;
   }
+  /* Regla de blindaje: el badge solo muestra código corto (familia + número + punto).
+     Nunca debe contener título, asunto ni texto libre.
+     Convención aprobada: T--GC-YYYYMMDD-VN / A--GC-YYYYMMDD-VN / C--GC-YYYYMMDD-VN.
+     El nombre del archivo usa la forma T-GC-YYYYMMDD-VN-CLIENTE, con CLIENTE en mayúsculas. */
   .meta-row {
     display: flex;
     gap: 8px;
