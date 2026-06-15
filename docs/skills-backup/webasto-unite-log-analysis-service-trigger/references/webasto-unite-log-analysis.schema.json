@@ -1,0 +1,285 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://grid-code.tech/schemas/webasto-unite-log-analysis.v1.schema.json",
+  "title": "Webasto Unite Log Analysis Contract v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "case",
+    "identity",
+    "window",
+    "input_artifacts",
+    "analysis_core",
+    "render_context",
+    "validation"
+  ],
+  "properties": {
+    "case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_channel", "request_text"],
+      "properties": {
+        "source_channel": {
+          "type": "string",
+          "enum": ["telegram", "email"]
+        },
+        "ticket_id": {
+          "type": ["string", "null"]
+        },
+        "request_text": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["building", "parking_plaza"],
+      "properties": {
+        "site": { "type": ["string", "null"] },
+        "building": { "type": "string", "minLength": 1 },
+        "parking_plaza": { "type": "string", "minLength": 1 },
+        "charger_name": { "type": ["string", "null"] },
+        "charger_id": { "type": ["string", "null"] },
+        "ip": { "type": ["string", "null"] },
+        "serial": { "type": ["string", "null"] },
+        "firmware": { "type": ["string", "null"] }
+      }
+    },
+    "window": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["start", "end"],
+      "properties": {
+        "start": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        },
+        "end": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        }
+      }
+    },
+    "input_artifacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "log_zip_path": { "type": ["string", "null"] },
+        "log_zip_url": { "type": ["string", "null"] }
+      }
+    },
+    "analysis_core": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "charger_id",
+        "charger_name",
+        "site_name",
+        "building",
+        "parking_plaza",
+        "ip",
+        "serial",
+        "firmware",
+        "window_start",
+        "window_end",
+        "timeline_days",
+        "ocpp_flow",
+        "metrics",
+        "health_score",
+        "health_band",
+        "health_band_class",
+        "service_status",
+        "recommended_action",
+        "operational_decision_text",
+        "client_explanation",
+        "probable_cause",
+        "evidence_level",
+        "remote_actions",
+        "remote_events",
+        "validation"
+      ],
+      "properties": {
+        "charger_id": { "type": ["string", "null"] },
+        "charger_name": { "type": ["string", "null"] },
+        "site_name": { "type": ["string", "null"] },
+        "building": { "type": "string", "minLength": 1 },
+        "parking_plaza": { "type": "string", "minLength": 1 },
+        "ip": { "type": ["string", "null"] },
+        "serial": { "type": ["string", "null"] },
+        "firmware": { "type": ["string", "null"] },
+        "window_start": { "type": "string" },
+        "window_end": { "type": "string" },
+        "timeline_days": {
+          "type": "array",
+          "minItems": 7,
+          "maxItems": 7,
+          "items": { "$ref": "#/$defs/timelineDay" }
+        },
+        "ocpp_flow": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/ocppEvent" }
+        },
+        "metrics": {
+          "type": "object"
+        },
+        "health_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "health_band": {
+          "type": "string"
+        },
+        "health_band_class": {
+          "type": "string",
+          "enum": ["ok", "watch", "attention", "critical", "none"]
+        },
+        "service_status": {
+          "type": "string"
+        },
+        "recommended_action": {
+          "type": "string"
+        },
+        "operational_decision_text": {
+          "type": "string"
+        },
+        "client_explanation": {
+          "type": "string"
+        },
+        "probable_cause": {
+          "type": ["string", "null"]
+        },
+        "evidence_level": {
+          "type": ["string", "null"]
+        },
+        "remote_actions": {
+          "type": "object"
+        },
+        "remote_events": {
+          "type": "array"
+        },
+        "validation": {
+          "type": "object"
+        }
+      }
+    },
+    "render_context": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "remote_site_label",
+        "remote_parking_spot",
+        "remote_asset_id",
+        "remote_location",
+        "site_name",
+        "health_score",
+        "health_band_class",
+        "health_band_label",
+        "service_status",
+        "recommended_action",
+        "operational_decision_text",
+        "recommended_action_text",
+        "timeline_days",
+        "ocpp_flow",
+        "metrics_bar",
+        "affected_layer",
+        "evidence_level_label",
+        "dominant_finding",
+        "probable_cause",
+        "client_explanation",
+        "remote_actions",
+        "remote_events",
+        "evidence_path"
+      ],
+      "properties": {
+        "remote_site_label": { "type": ["string", "null"] },
+        "remote_parking_spot": { "type": ["string", "null"] },
+        "remote_asset_id": { "type": ["string", "null"] },
+        "remote_location": { "type": ["string", "null"] },
+        "site_name": { "type": ["string", "null"] },
+        "health_score": { "type": ["number", "integer"] },
+        "health_band_class": { "type": "string" },
+        "health_band_label": { "type": "string" },
+        "service_status": { "type": "string" },
+        "recommended_action": { "type": "string" },
+        "operational_decision_text": { "type": "string" },
+        "recommended_action_text": { "type": "string" },
+        "timeline_days": { "type": "array" },
+        "ocpp_flow": { "type": "array" },
+        "metrics_bar": { "type": "object" },
+        "affected_layer": { "type": ["string", "null"] },
+        "evidence_level_label": { "type": ["string", "null"] },
+        "dominant_finding": { "type": ["string", "null"] },
+        "probable_cause": { "type": ["string", "null"] },
+        "client_explanation": { "type": "string" },
+        "remote_actions": { "type": "object" },
+        "remote_events": { "type": "array" },
+        "evidence_path": { "type": ["string", "null"] }
+      }
+    },
+    "validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "preflight_ok",
+        "timeline_days_count",
+        "no_demo_values",
+        "decision_visible_first_page",
+        "actions_humanized",
+        "no_exploratory_visit",
+        "building_present",
+        "plaza_present",
+        "output_paths_ok"
+      ],
+      "properties": {
+        "preflight_ok": { "type": "boolean" },
+        "timeline_days_count": { "type": "integer", "minimum": 7, "maximum": 7 },
+        "no_demo_values": { "type": "boolean" },
+        "decision_visible_first_page": { "type": "boolean" },
+        "actions_humanized": { "type": "boolean" },
+        "no_exploratory_visit": { "type": "boolean" },
+        "building_present": { "type": "boolean" },
+        "plaza_present": { "type": "boolean" },
+        "output_paths_ok": { "type": "boolean" }
+      }
+    }
+  },
+  "$defs": {
+    "timelineDay": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["date", "state_class", "reading"],
+      "properties": {
+        "date": { "type": "string" },
+        "state_class": {
+          "type": "string",
+          "enum": ["active", "anomaly", "empty", "nodata"]
+        },
+        "reading": { "type": "string" },
+        "note": { "type": ["string", "null"] }
+      }
+    },
+    "ocppEvent": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["event", "meaning"],
+      "properties": {
+        "event": {
+          "type": "string",
+          "enum": [
+            "BootNotification",
+            "Heartbeat",
+            "Authorize",
+            "StartTransaction",
+            "StopTransaction",
+            "StatusNotification"
+          ]
+        },
+        "meaning": { "type": "string" },
+        "present": { "type": ["boolean", "null"] }
+      }
+    }
+  }
+}

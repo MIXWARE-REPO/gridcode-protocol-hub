@@ -1,0 +1,30 @@
+{
+  "case": {
+    "source_channel": "telegram",
+    "ticket_id": null,
+    "request_text": "Analiza el cargador de plaza 142"
+  },
+  "identity": {
+    "site": "LABORATORIO",
+    "building": "LABORATORIO",
+    "parking_plaza": "142",
+    "charger_name": "Webasto Unite 142",
+    "charger_id": "142",
+    "ip": "192.168.31.142",
+    "serial": null,
+    "firmware": null
+  },
+  "window": {
+    "start": "2026-06-01",
+    "end": "2026-06-07"
+  },
+  "input_artifacts": {
+    "log_zip_path": null,
+    "log_zip_url": null
+  },
+  "mail": {
+    "send_if_applicable": true,
+    "recipient": "dario@grid-code.tech",
+    "subject_hint": "Informe de logs"
+  }
+}
